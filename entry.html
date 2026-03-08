@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entry Data - Alat Masuk PLN</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-page">
+
+  <!-- HEADER -->
+  <nav class="navbar pln-navbar px-3 py-2 sticky-top">
+    <div class="d-flex align-items-center gap-2">
+      <img src="img/logo-pln.jpeg" alt="PLN" class="header-logo">
+      <div>
+        <div class="text-white fw-bold" style="font-size:13px">PLN Electricity Service</div>
+        <div class="text-white-50" style="font-size:11px">UL Palembang</div>
+      </div>
+    </div>
+    <button class="btn btn-outline-light btn-sm fw-semibold" onclick="doLogout()">
+      <i class="bi bi-box-arrow-right me-1"></i>Keluar
+    </button>
+  </nav>
+
+  <!-- KONTEN -->
+  <div class="container-fluid px-3 py-3 pb-5 mb-4">
+
+    <h5 class="fw-bold mb-0">Entry Data Aset</h5>
+    <p class="text-muted small mb-3">Formulir pencatatan kendaraan &amp; peralatan</p>
+
+    <!-- Info Kendaraan -->
+    <div class="card rounded-4 border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-truck me-1"></i>Informasi Kendaraan / Peralatan</h6>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">No. Aset</label>
+          <input class="form-control" id="f_no" type="text" placeholder="Nomor aset (opsional)">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Nama Kendaraan / Peralatan</label>
+          <input class="form-control" id="f_nama" type="text" placeholder="Contoh: Mobil Pickup / Genset">
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted text-uppercase">Tgl Diterima UL</label>
+            <input class="form-control" id="f_tgl_ul" type="date" onchange="hitungUsia()">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted text-uppercase">Tgl Diterima ULP</label>
+            <input class="form-control" id="f_tgl_ulp" type="date" onchange="hitungUsia()">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">ULP Penerima</label>
+          <select class="form-select" id="f_ulp">
+            <option value="">-- Pilih ULP --</option>
+            <option value="UP3">UP3</option>
+            <option value="Rivai">Rivai</option>
+            <option value="Kenten">Kenten</option>
+            <option value="Sukarame">Sukarame</option>
+            <option value="Ampera">Ampera</option>
+            <option value="Mariana">Mariana</option>
+            <option value="Pangkalan Balai">Pangkalan Balai</option>
+            <option value="Sekayu">Sekayu</option>
+          </select>
+        </div>
+
+        <div class="mb-0">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Masa Ekonomis (hari)</label>
+          <input class="form-control" id="f_masa_ekonomis" type="number" placeholder="Contoh: 1825 (= 5 tahun)" onchange="hitungUsia()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Kalkulasi Otomatis -->
+    <div class="card rounded-4 border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-calculator me-1"></i>Kalkulasi Otomatis</h6>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Usia Pemakaian (hari ini − tgl diterima)</label>
+          <div class="calc-box" id="calc_usia">—</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Sisa Masa Ekonomis</label>
+          <div class="calc-box" id="calc_sisa">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eviden -->
+    <div class="card rounded-4 border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-paperclip me-1"></i>Eviden Dokumen</h6>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Eviden BA (Berita Acara)</label>
+          <div class="upload-box" onclick="document.getElementById('file_ba').click()">
+            <i class="bi bi-file-earmark-arrow-up fs-4 text-muted"></i>
+            <div class="small text-muted mt-1">Tap untuk upload file BA (PDF, PNG, JPG)</div>
+          </div>
+          <input type="file" id="file_ba" multiple accept=".pdf,.png,.jpg,.jpeg" style="display:none" onchange="previewFiles('file_ba','prev_ba')">
+          <div class="d-flex flex-wrap gap-2 mt-2" id="prev_ba"></div>
+        </div>
+
+        <div class="mb-0">
+          <label class="form-label small fw-semibold text-muted text-uppercase">Eviden Foto Aset</label>
+          <div class="upload-box" onclick="document.getElementById('file_foto').click()">
+            <i class="bi bi-camera fs-4 text-muted"></i>
+            <div class="small text-muted mt-1">Tap untuk upload foto aset</div>
+          </div>
+          <input type="file" id="file_foto" multiple accept="image/*" style="display:none" onchange="previewFiles('file_foto','prev_foto')">
+          <div class="d-flex flex-wrap gap-2 mt-2" id="prev_foto"></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="btnSimpan" class="btn btn-primary w-100 py-3 fw-bold rounded-3" onclick="simpanEntry()">
+      <i class="bi bi-check-circle me-1"></i> Simpan Data Aset
+    </button>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="entry.html" class="nav-item active">
+      <i class="bi bi-plus-square-fill fs-5"></i>
+      <span>Entry</span>
+    </a>
+    <a href="data.html" class="nav-item">
+      <i class="bi bi-clipboard-data fs-5"></i>
+      <span>Data</span>
+    </a>
+    <a href="output.html" class="nav-item">
+      <i class="bi bi-bar-chart-fill fs-5"></i>
+      <span>Output</span>
+    </a>
+  </nav>
+
+  <!-- Modal Foto -->
+  <div class="modal fade" id="imgModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 bg-transparent">
+        <img id="modalImg" src="" class="img-fluid rounded-3" alt="Foto Aset">
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x mb-5 pb-3" style="z-index:9999">
+    <div id="toast" class="toast text-white bg-primary border-0 rounded-3" role="alert">
+      <div class="toast-body fw-semibold text-center" id="toastMsg"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>if (!sessionStorage.getItem("pln_logged_in")) window.location.href = "index.html";</script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/entry.js"></script>
+</body>
+</html>

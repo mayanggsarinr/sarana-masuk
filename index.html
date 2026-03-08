@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Alat Masuk PLN</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-wrap">
+    <div class="text-center mb-4">
+      <img src="img/logo-pln.jpeg" alt="Logo PLN" class="login-logo mb-3">
+      <h5 class="fw-bold text-white mb-1">PT PLN Electricity Service</h5>
+      <small class="text-white-50">UL Palembang — Sistem Pencatatan Aset</small>
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted small text-uppercase">Username</label>
+        <input class="form-control" id="loginUser" type="text" placeholder="Masukkan username">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted small text-uppercase">Password</label>
+        <input class="form-control" id="loginPass" type="password" placeholder="Masukkan password">
+      </div>
+      <button class="btn btn-primary w-100 fw-bold py-2" onclick="doLogin()">
+        <i class="bi bi-lock-fill me-1"></i> Masuk
+      </button>
+      <div class="text-danger text-center mt-2 small" id="loginError" style="display:none"></div>
+      <div class="text-center mt-3 text-muted" style="font-size:11px">Demo: admin / pln2024</div>
+    </div>
+  </div>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>

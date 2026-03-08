@@ -1,0 +1,172 @@
+/* ============================================
+   style.css - Custom styles (Bootstrap base)
+   PLN Electricity Service UL Palembang
+============================================ */
+
+:root {
+  --pln-blue: #003087;
+  --pln-light: #0057B8;
+  --pln-sky: #00AEEF;
+}
+
+/* ===== LOGIN ===== */
+body.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--pln-blue) 0%, var(--pln-light) 60%, var(--pln-sky) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+}
+
+/* ===== APP ===== */
+body.app-page {
+  background: #F0F4F8;
+  padding-bottom: 80px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ===== NAVBAR ===== */
+.pln-navbar {
+  background: linear-gradient(135deg, var(--pln-blue), var(--pln-light)) !important;
+  box-shadow: 0 2px 12px rgba(0,48,135,0.15);
+}
+
+.header-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 2px;
+}
+
+/* ===== TABLE HEADER ===== */
+.pln-thead {
+  background: linear-gradient(135deg, var(--pln-blue), var(--pln-light));
+  color: white;
+}
+
+.pln-thead th {
+  color: white !important;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  padding: 10px 8px;
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: white;
+  display: flex;
+  border-top: 1px solid #E2E8F0;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  z-index: 1000;
+}
+
+.bottom-nav .nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #94A3B8;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.bottom-nav .nav-item.active {
+  color: var(--pln-blue);
+}
+
+/* ===== UPLOAD BOX ===== */
+.upload-box {
+  border: 2px dashed #CBD5E1;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #F8FAFC;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-box:hover {
+  border-color: var(--pln-sky);
+  background: #EFF8FF;
+}
+
+/* ===== KALKULASI BOX ===== */
+.calc-box {
+  background: #EEF3FF;
+  border: 1px solid #C5D5F5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--pln-blue);
+  font-size: 14px;
+}
+
+/* ===== FOTO THUMBNAIL ===== */
+.file-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #E2E8F0;
+  cursor: pointer;
+}
+
+/* ===== FILTER CHIPS ===== */
+.filter-chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #CBD5E1;
+  background: white;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-chip.active {
+  background: var(--pln-blue);
+  border-color: var(--pln-blue);
+  color: white;
+}
+
+/* ===== HIGHLIGHT SEARCH ===== */
+.highlight {
+  background: #FEF08A;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* ===== TOAST ===== */
+.toast {
+  min-width: 260px;
+}

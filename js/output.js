@@ -16,28 +16,38 @@ function tampilOutput() {
 
   const wrap = document.getElementById("outputTabelWrap");
   if (!assets.length) {
-    wrap.innerHTML = `<div class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada laporan</div>`;
+    wrap.innerHTML = `<div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada laporan<br>
+      <small>Entry data terlebih dahulu</small></div>`;
     return;
   }
 
+  // Kumpulkan ULP unik dari data
   const ulps = [...new Set(assets.map((a) => a.ulp).filter(Boolean))].sort();
+
+  // Kelompokkan berdasarkan nama aset
   const kelompok = {};
   assets.forEach((a) => {
-    if (!kelompok[a.nama])
-      kelompok[a.nama] = { nama: a.nama, kontrakTotal: 0, dataUlp: {} };
-    kelompok[a.nama].kontrakTotal++;
-    if (!kelompok[a.nama].dataUlp[a.ulp])
-      kelompok[a.nama].dataUlp[a.ulp] = {
-        kontrak: 0,
-        realisasi: 0,
-        assetId: a.id,
+    const key = a.nama;
+    if (!kelompok[key]) {
+      kelompok[key] = {
+        nama: a.nama,
+        kontrakTotal: 0,
+        dataUlp: {},
       };
-    kelompok[a.nama].dataUlp[a.ulp].kontrak++;
-    kelompok[a.nama].dataUlp[a.ulp].realisasi += a.realisasi || 0;
-    kelompok[a.nama].dataUlp[a.ulp].assetId = a.id;
+    }
+    kelompok[key].kontrakTotal++;
+    if (!kelompok[key].dataUlp[a.ulp]) {
+      kelompok[key].dataUlp[a.ulp] = { kontrak: 0, realisasi: 0, assetIds: [] };
+    }
+    kelompok[key].dataUlp[a.ulp].kontrak++;
+    kelompok[key].dataUlp[a.ulp].realisasi += a.realisasi || 0;
+    kelompok[key].dataUlp[a.ulp].assetIds.push(a.id);
   });
 
   const baris = Object.values(kelompok);
+
+  // Hitung total per ULP
   const totalUlp = {};
   ulps.forEach((ulp) => {
     totalUlp[ulp] = { kontrak: 0, realisasi: 0 };
@@ -49,75 +59,99 @@ function tampilOutput() {
     });
   });
 
-  const thStyle = "color:#ffffff !important;background:transparent";
-  const lebarMin = 300 + ulps.length * 180;
-  let html = `<div style="overflow-x:auto"><table class="table table-bordered table-sm mb-0 align-middle" style="min-width:${lebarMin}px;font-size:12px">
+  const th = (txt, extra = "") =>
+    `<th style="background:linear-gradient(135deg,#003087,#0057B8);color:#fff !important;font-size:11px;white-space:nowrap;${extra}">${txt}</th>`;
+  const lebarMin = 350 + ulps.length * 160;
+
+  let html = `<div style="overflow-x:auto">
+  <table class="table table-bordered table-sm mb-0 align-middle" style="min-width:${lebarMin}px;font-size:12px">
     <thead>
-      <tr style="background:linear-gradient(135deg,#003087,#0057B8)">
-        <th rowspan="2" class="align-middle" style="${thStyle}">No</th>
-        <th rowspan="2" class="align-middle" style="min-width:130px;${thStyle}">Kendaraan / Peralatan</th>
-        <th rowspan="2" class="align-middle text-center" style="${thStyle}">Jml Kontrak</th>
-        ${ulps.map((u) => `<th colspan="3" class="text-center" style="${thStyle};border-left:2px solid rgba(255,255,255,0.3)">${u}</th>`).join("")}
+      <tr>
+        ${th("No", "width:40px")}
+        ${th("Kendaraan / Peralatan", "min-width:160px")}
+        ${th("Jml<br>Kontrak", "text-align:center")}
+        ${ulps.map((u) => `<th colspan="3" style="background:linear-gradient(135deg,#003087,#0057B8);color:#fff !important;text-align:center;border-left:3px solid rgba(255,255,255,0.4)">${u}</th>`).join("")}
+        ${th("Jumlah<br>Realisasi", "text-align:center;border-left:3px solid rgba(255,255,255,0.4)")}
       </tr>
-      <tr style="background:#001a5e">
+      <tr>
+        <th colspan="3" style="background:#001a5e;color:#fff !important"></th>
         ${ulps
           .map(
             () => `
-          <th style="font-size:10px;${thStyle};border-left:2px solid rgba(255,255,255,0.2)">Kontrak</th>
-          <th style="font-size:10px;${thStyle}">Realisasi</th>
-          <th style="font-size:10px;${thStyle}">Selisih</th>`,
+          <th style="background:#001a5e;color:#fff !important;font-size:10px;border-left:3px solid rgba(255,255,255,0.3)">Kontrak</th>
+          <th style="background:#001a5e;color:#fff !important;font-size:10px">Realisasi</th>
+          <th style="background:#001a5e;color:#fff !important;font-size:10px">Selisih</th>`,
           )
           .join("")}
+        <th style="background:#001a5e;color:#fff !important;font-size:10px;border-left:3px solid rgba(255,255,255,0.3)"></th>
       </tr>
     </thead>
     <tbody>`;
 
   baris.forEach((b, i) => {
+    let totalRealisasiBaris = 0;
+    ulps.forEach((ulp) => {
+      if (b.dataUlp[ulp]) totalRealisasiBaris += b.dataUlp[ulp].realisasi;
+    });
+
     html += `<tr>
-      <td class="text-muted">${i + 1}</td>
+      <td class="text-muted text-center">${i + 1}</td>
       <td class="fw-semibold">${b.nama}</td>
       <td class="text-center fw-bold text-primary">${b.kontrakTotal}</td>
       ${ulps
         .map((ulp) => {
           const d = b.dataUlp[ulp];
           if (!d)
-            return `<td colspan="3" class="text-center text-muted">—</td>`;
+            return `<td class="text-center text-muted" style="border-left:3px solid #dee2e6">—</td><td class="text-center text-muted">—</td><td class="text-center text-muted">—</td>`;
           const selisih = d.kontrak - d.realisasi;
-          const warna =
-            selisih < 0 ? "danger" : selisih === 0 ? "success" : "primary";
+          const wSelisih =
+            selisih < 0 ? "#dc3545" : selisih === 0 ? "#198754" : "#0d6efd";
           const sudah = d.realisasi > 0;
+          const assetId = d.assetIds[0];
           return `
-          <td class="text-center">${d.kontrak}</td>
+          <td class="text-center fw-semibold" style="border-left:3px solid #dee2e6">${d.kontrak}</td>
           <td class="text-center">
             <div class="fw-bold ${sudah ? "" : "text-muted"}">${sudah ? d.realisasi : "—"}</div>
-            <button onclick="bukaModalRealisasi('${d.assetId}')"
-              class="btn btn-${sudah ? "success" : "primary"} btn-sm py-0 px-2 mt-1"
+            <button onclick="bukaModalRealisasi('${assetId}')"
+              class="btn btn-${sudah ? "outline-success" : "primary"} btn-sm py-0 px-2 mt-1"
               style="font-size:10px">${sudah ? "✏️ Edit" : "➕ Isi"}</button>
           </td>
-          <td class="text-center fw-bold text-${warna}">${sudah ? selisih : "—"}</td>`;
+          <td class="text-center fw-bold" style="color:${wSelisih}">${sudah ? selisih : "—"}</td>`;
         })
         .join("")}
+      <td class="text-center fw-bold text-success" style="border-left:3px solid #dee2e6">${totalRealisasiBaris || "—"}</td>
     </tr>`;
   });
 
+  // Baris TOTAL
+  const grandTotal = ulps.reduce(
+    (s, ulp) => s + (totalUlp[ulp]?.realisasi || 0),
+    0,
+  );
   const totalKontrak = baris.reduce((s, b) => s + b.kontrakTotal, 0);
-  html += `<tr class="table-primary fw-bold">
-    <td colspan="2">TOTAL</td>
-    <td class="text-center">${totalKontrak}</td>
+
+  html += `<tr style="background:#EEF3FF;font-weight:800;border-top:2px solid #003087">
+    <td colspan="2" style="color:#003087">TOTAL</td>
+    <td class="text-center" style="color:#003087">${totalKontrak}</td>
     ${ulps
       .map((ulp) => {
         const t = totalUlp[ulp];
         const selisih = t.kontrak - t.realisasi;
         const warna =
-          selisih < 0 ? "danger" : selisih === 0 ? "success" : "primary";
-        return `<td class="text-center">${t.kontrak}</td><td class="text-center text-success">${t.realisasi}</td><td class="text-center text-${warna}">${selisih}</td>`;
+          selisih < 0 ? "#dc3545" : selisih === 0 ? "#198754" : "#003087";
+        return `<td class="text-center" style="color:#003087;border-left:3px solid #dee2e6">${t.kontrak}</td>
+              <td class="text-center" style="color:#198754">${t.realisasi}</td>
+              <td class="text-center" style="color:${warna}">${selisih}</td>`;
       })
       .join("")}
-  </tr></tbody></table></div>`;
+    <td class="text-center" style="color:#198754;border-left:3px solid #dee2e6">${grandTotal}</td>
+  </tr>`;
 
+  html += `</tbody></table></div>`;
   wrap.innerHTML = html;
 }
 
+// ===== MODAL REALISASI =====
 function bukaModalRealisasi(assetId) {
   const aset = semuaAssets.find((a) => a.id === assetId);
   if (!aset) return;
@@ -150,8 +184,12 @@ function hitungSelisihModal() {
   const el = document.getElementById("modalSelisih");
   el.textContent = selisih;
   el.className =
-    "fw-bold fs-5 text-" +
-    (selisih < 0 ? "danger" : selisih === 0 ? "success" : "primary");
+    "fw-bold fs-5 " +
+    (selisih < 0
+      ? "text-danger"
+      : selisih === 0
+        ? "text-success"
+        : "text-primary");
 }
 
 async function simpanRealisasi() {
@@ -161,7 +199,9 @@ async function simpanRealisasi() {
   btn.innerHTML =
     '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
   btn.disabled = true;
+
   await updateAsset(idAsetDipilih, { realisasi });
+
   btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Simpan Realisasi';
   btn.disabled = false;
   tutupModalRealisasi();

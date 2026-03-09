@@ -4,7 +4,18 @@
 // ============================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDq59vCXRF2DTu1TCSLrqbhufzAaG_mW0c",
@@ -13,20 +24,21 @@ const firebaseConfig = {
   storageBucket: "peralatan-masuk.firebasestorage.app",
   messagingSenderId: "1030965034829",
   appId: "1:1030965034829:web:0e4b01af3c1a5221148104",
-  measurementId: "G-TKX4CBZ7NF"
+  measurementId: "G-TKX4CBZ7NF",
 };
 
 const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const db = getFirestore(app);
 
 // ===== FUNGSI DATABASE =====
 
 // Ambil semua aset (realtime)
 function listenAssets(callback) {
-  const q = query(collection(db, "assets"), orderBy("tglEntry", "desc"));
-  return onSnapshot(q, (snapshot) => {
+  return onSnapshot(collection(db, "assets"), (snapshot) => {
     const assets = [];
-    snapshot.forEach(d => assets.push({ id: d.id, ...d.data() }));
+    snapshot.forEach((d) => assets.push({ id: d.id, ...d.data() }));
+    // Sort by tglEntry descending
+    assets.sort((a, b) => (b.tglEntry || "").localeCompare(a.tglEntry || ""));
     callback(assets);
   });
 }

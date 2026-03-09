@@ -49,22 +49,23 @@ function tampilOutput() {
     });
   });
 
+  const thStyle = "color:#ffffff !important;background:transparent";
   const lebarMin = 300 + ulps.length * 180;
   let html = `<div style="overflow-x:auto"><table class="table table-bordered table-sm mb-0 align-middle" style="min-width:${lebarMin}px;font-size:12px">
     <thead>
-      <tr style="background:linear-gradient(135deg,#003087,#0057B8);color:white">
-        <th rowspan="2" class="align-middle" style="color:white">No</th>
-        <th rowspan="2" class="align-middle" style="min-width:130px;color:white">Kendaraan / Peralatan</th>
-        <th rowspan="2" class="align-middle text-center" style="color:white">Jml Kontrak</th>
-        ${ulps.map((u) => `<th colspan="3" class="text-center" style="color:white;border-left:2px solid rgba(255,255,255,0.3)">${u}</th>`).join("")}
+      <tr style="background:linear-gradient(135deg,#003087,#0057B8)">
+        <th rowspan="2" class="align-middle" style="${thStyle}">No</th>
+        <th rowspan="2" class="align-middle" style="min-width:130px;${thStyle}">Kendaraan / Peralatan</th>
+        <th rowspan="2" class="align-middle text-center" style="${thStyle}">Jml Kontrak</th>
+        ${ulps.map((u) => `<th colspan="3" class="text-center" style="${thStyle};border-left:2px solid rgba(255,255,255,0.3)">${u}</th>`).join("")}
       </tr>
-      <tr style="background:#002070;color:white">
+      <tr style="background:#001a5e">
         ${ulps
           .map(
             () => `
-          <th style="font-size:10px;color:white;border-left:2px solid rgba(255,255,255,0.2)">Kontrak</th>
-          <th style="font-size:10px;color:white">Realisasi</th>
-          <th style="font-size:10px;color:white">Selisih</th>`,
+          <th style="font-size:10px;${thStyle};border-left:2px solid rgba(255,255,255,0.2)">Kontrak</th>
+          <th style="font-size:10px;${thStyle}">Realisasi</th>
+          <th style="font-size:10px;${thStyle}">Selisih</th>`,
           )
           .join("")}
       </tr>

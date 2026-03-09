@@ -21,20 +21,20 @@ function previewFiles(inputId, previewId) {
   preview.innerHTML = "";
   Array.from(input.files).forEach((file) => {
     const div = document.createElement("div");
-    div.className = "badge bg-secondary rounded-2 p-2";
+    div.className = "badge bg-secondary rounded-2 p-2 me-1";
     div.textContent = "📄 " + file.name;
     preview.appendChild(div);
   });
 }
 
 async function simpanEntry() {
-  const nama = document.getElementById("f_nama").value.trim();
+  const nama = document.getElementById("f_kndrn").value;
   const ulp = document.getElementById("f_ulp").value;
   const tglUL = document.getElementById("f_tgl_ul").value;
   const tglULP = document.getElementById("f_tgl_ulp").value;
 
   if (!nama) {
-    tampilToast("⚠️ Nama kendaraan/peralatan wajib diisi!");
+    tampilToast("⚠️ Nama kendaraan/peralatan wajib dipilih!");
     return;
   }
   if (!ulp) {
@@ -54,7 +54,6 @@ async function simpanEntry() {
   );
   const sisa = masa - usia;
 
-  // Ambil nama file saja (tidak simpan base64)
   const baNames = Array.from(document.getElementById("file_ba").files).map(
     (f) => f.name,
   );
@@ -69,7 +68,6 @@ async function simpanEntry() {
 
   try {
     await addAsset({
-      no: document.getElementById("f_no").value.trim(),
       nama: nama,
       tglUL: tglUL,
       tglULP: tglULP,
@@ -86,7 +84,7 @@ async function simpanEntry() {
     tampilToast("✅ Data berhasil disimpan!");
   } catch (e) {
     console.error(e);
-    tampilToast("❌ Gagal menyimpan, coba lagi!");
+    tampilToast("❌ Gagal menyimpan: " + e.message);
   }
 
   btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Simpan Data Aset';
@@ -94,12 +92,11 @@ async function simpanEntry() {
 }
 
 function resetForm() {
-  ["f_no", "f_nama", "f_tgl_ul", "f_tgl_ulp", "f_masa_ekonomis"].forEach(
-    (id) => {
-      document.getElementById(id).value = "";
-    },
-  );
+  document.getElementById("f_kndrn").value = "";
   document.getElementById("f_ulp").value = "";
+  document.getElementById("f_tgl_ul").value = "";
+  document.getElementById("f_tgl_ulp").value = "";
+  document.getElementById("f_masa_ekonomis").value = "";
   document.getElementById("calc_usia").textContent = "—";
   document.getElementById("calc_sisa").textContent = "—";
   document.getElementById("prev_ba").innerHTML = "";

@@ -45,7 +45,78 @@ function tampilOutput() {
     kelompok[key].dataUlp[a.ulp].assetIds.push(a.id);
   });
 
-  const baris = Object.values(kelompok);
+  // Urutan tetap sesuai dropdown entry
+  const urutanNama = [
+    "Mobil Station 1500 CC",
+    "Mobil Station 2500 CC",
+    "Mobil Pickup 1500 CC",
+    "Mobil Pickup 2500 CC",
+    "Mobil Pickup 2500 CC Single Cabin 4WD",
+    "Mobil Pickup 2500 CC Double Cabin 4WD",
+    "Mobil Pickup 2500 CC Double Cabin 4WD (TL K3)",
+    "Sepeda Motor Sport (Listrik)",
+    "Sepeda Motor Trail",
+    "Sepeda Motor Trail (TL K3)",
+    "Truk Engkel",
+    "Mobil Skylift - Crane",
+    "Perahu mesin 100 HP",
+    "Helm Safety",
+    "Sepatu Kerja Safety",
+    "Sarung Tangan Kulit",
+    "Kacamata Safety/Sunglasses",
+    "Jas Hujan Two Pieces",
+    "Pakaian/Seragam Kerja",
+    "Rompi Distribusi",
+    "Tang Kombinasi",
+    "Obeng Plus(+)",
+    "Obeng Minus(-)",
+    "Cutter Set",
+    "Tas Perkakas",
+    "Headlamp",
+    "Tang Ampere (Clip on AVO Meter digital) 600 A",
+    "Phase Sequence",
+    "Alat Ukur Tahanan Isolasi type 10.000 Volt DC",
+    "Wire Cutter s.d 240 mm^2",
+    "Lampu Sorot 12 V ; 100 Watt",
+    "Lampu Senter 6 Battery (Re-charger)",
+    "Tool Set Mekanik Lengkap",
+    "Chainsaw",
+    "Angkus Isolasi",
+    "Parang",
+    "Tali Manila 12 mm2 (20m)",
+    "Hidrolik Press (dies uk 35 s.d 300 mm2)",
+    "Coffing Hoist/Rachet Puller 1,5 Ton",
+    "Kotak Peralatan (Termasuk Arit)",
+    "Tangga Fiber (2 Section Ladder)",
+    "Smartphone + Power Bank (APKT Mobile)",
+    "Telescopic Hotstick 20 kV ; 10,7 mtr",
+    "Hand Press (dies uk 10 s.d 70 mm2)",
+    "Hand Press Electric (dies uk 10 s.d 70 mm2)",
+    "Tang Ampere 3 Phase",
+    "Earth Tester",
+    "Full Body Hardness + Double Lanyard",
+    "Voltage Detector 20 kV",
+    "Sarung Tangan 20 kV kelas 2",
+    "Sepatu Berisolasi 20 kV kelas 2",
+    "Sarung Tangan Tahan Tegangan 1kV (Karet)",
+    "Radio Komunikasi Unit Lengkap dengan Antena VHF",
+    "Radio Komunikasi HT",
+    "Groundcluster Lengkap dengan Cable, Groundrod dan Kelengkapannya",
+    "APAR",
+    "Kotak P3K Jenis A",
+    "Traffic Cone + Webbing",
+    "Tanda Papan Peringatan Kerja",
+    "LOTO",
+  ];
+
+  const baris = Object.values(kelompok).sort((a, b) => {
+    const ia = urutanNama.indexOf(a.nama);
+    const ib = urutanNama.indexOf(b.nama);
+    if (ia === -1 && ib === -1) return a.nama.localeCompare(b.nama);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
 
   // Hitung total per ULP
   const totalUlp = {};

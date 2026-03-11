@@ -122,6 +122,100 @@
       </a>
     </nav>
 
+    <!-- Modal Detail Aset -->
+    <div class="modal fade" id="modalDetail" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+          <div
+            class="modal-header border-0 pb-0"
+            style="
+              background: linear-gradient(135deg, #003087, #0057b8);
+              border-radius: 1rem 1rem 0 0;
+            "
+          >
+            <div>
+              <h6 class="modal-title text-white fw-bold mb-0" id="detailNama">
+                —
+              </h6>
+              <small class="text-white-50" id="detailUlp">—</small>
+            </div>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body pt-3">
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <div class="p-2 rounded-3 bg-light text-center">
+                  <div class="text-muted" style="font-size: 10px">
+                    TGL DITERIMA UL
+                  </div>
+                  <div class="fw-bold small" id="detailTglUL">—</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-2 rounded-3 bg-light text-center">
+                  <div class="text-muted" style="font-size: 10px">
+                    TGL DITERIMA ULP
+                  </div>
+                  <div class="fw-bold small" id="detailTglULP">—</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div
+                  class="p-2 rounded-3 text-center"
+                  style="background: #e8f0fe"
+                >
+                  <div class="text-muted" style="font-size: 10px">
+                    MASA EKONOMIS
+                  </div>
+                  <div class="fw-bold text-primary" id="detailMasa">—</div>
+                  <div class="text-muted" style="font-size: 9px">hari</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div
+                  class="p-2 rounded-3 text-center"
+                  style="background: #fff3cd"
+                >
+                  <div class="text-muted" style="font-size: 10px">
+                    USIA PEMAKAIAN
+                  </div>
+                  <div class="fw-bold text-warning" id="detailUsia">—</div>
+                  <div class="text-muted" style="font-size: 9px">hari</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div
+                  class="p-2 rounded-3 text-center"
+                  style="background: #d1e7dd"
+                >
+                  <div class="text-muted" style="font-size: 10px">SISA</div>
+                  <div class="fw-bold text-success" id="detailSisa">—</div>
+                  <div class="text-muted" style="font-size: 9px">hari</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="text-muted fw-semibold mb-1" style="font-size: 11px">
+                <i class="bi bi-file-earmark-text me-1"></i>FILE BERITA ACARA
+              </div>
+              <div id="detailBA" class="d-flex flex-wrap gap-1">—</div>
+            </div>
+            <div>
+              <div class="text-muted fw-semibold mb-1" style="font-size: 11px">
+                <i class="bi bi-camera me-1"></i>FILE FOTO ASET
+              </div>
+              <div id="detailFoto" class="d-flex flex-wrap gap-1">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal Foto -->
     <div class="modal fade" id="imgModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">

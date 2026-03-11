@@ -96,7 +96,8 @@ function tampilData() {
         a.fotoFiles && a.fotoFiles.length
           ? `<span class="badge bg-success">📷 ${a.fotoFiles.length}</span>`
           : '<span class="text-muted">—</span>';
-      return `<tr>
+      const sisaWarna = "";
+      return `<tr onclick="bukaDetail('${a.id}')" style="cursor:pointer" class="table-row-hover">
       <td class="text-muted small">${i + 1}</td>
       <td class="fw-semibold" style="min-width:130px">${sorot(a.nama, kata)}</td>
       <td><span class="badge bg-primary bg-opacity-10 text-primary">${sorot(a.ulp || "", kata)}</span></td>
@@ -104,13 +105,55 @@ function tampilData() {
       <td class="small">${a.tglULP || "—"}</td>
       <td class="small text-center">${a.usia ?? "—"}</td>
       <td class="small text-center">${a.masaEkonomis || "—"}</td>
-      <td class="small text-center fw-bold">${a.sisa ?? "—"}</td>
+      <td class="small text-center fw-bold ${sisaWarna}">${a.sisa ?? "—"}</td>
       <td>${fotoInfo}</td>
     </tr>`;
     })
     .join("");
 }
 
+function bukaDetail(id) {
+  const a = semuaAssets.find((x) => x.id === id);
+  if (!a) return;
+
+  document.getElementById("detailNama").textContent = a.nama || "—";
+  document.getElementById("detailUlp").textContent = "📍 ULP " + (a.ulp || "—");
+  document.getElementById("detailTglUL").textContent = a.tglUL || "—";
+  document.getElementById("detailTglULP").textContent = a.tglULP || "—";
+  document.getElementById("detailMasa").textContent = a.masaEkonomis ?? "—";
+  document.getElementById("detailUsia").textContent = a.usia ?? "—";
+
+  const sisa = a.sisa ?? null;
+  const sisaEl = document.getElementById("detailSisa");
+  sisaEl.textContent = sisa ?? "—";
+  sisaEl.className = "fw-bold";
+
+  // File BA
+  const baEl = document.getElementById("detailBA");
+  if (a.baFiles && a.baFiles.length) {
+    baEl.innerHTML = a.baFiles
+      .map(
+        (f) => `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`,
+      )
+      .join("");
+  } else {
+    baEl.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
+  }
+
+  // File Foto
+  const fotoEl = document.getElementById("detailFoto");
+  if (a.fotoFiles && a.fotoFiles.length) {
+    fotoEl.innerHTML = a.fotoFiles
+      .map((f) => `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`)
+      .join("");
+  } else {
+    fotoEl.innerHTML = '<span class="text-muted small">Tidak ada foto</span>';
+  }
+
+  new bootstrap.Modal(document.getElementById("modalDetail")).show();
+}
+
 window.tampilData = tampilData;
 window.setFilterUlp = setFilterUlp;
 window.hapusCari = hapusCari;
+window.bukaDetail = bukaDetail;

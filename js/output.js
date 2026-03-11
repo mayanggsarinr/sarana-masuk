@@ -132,7 +132,70 @@ function tampilOutput() {
 
   const th = (txt, extra = "") =>
     `<th style="background:linear-gradient(135deg,#003087,#0057B8);color:#fff !important;font-size:11px;white-space:nowrap;${extra}">${txt}</th>`;
-  const lebarMin = 350 + ulps.length * 160;
+
+  const masaEkonomisMap = {
+    "Mobil Station 1500 CC": 1095,
+    "Mobil Station 2500 CC": 1095,
+    "Mobil Pickup 1500 CC": 1095,
+    "Mobil Pickup 2500 CC": 1095,
+    "Mobil Pickup 2500 CC Single Cabin 4WD": 1095,
+    "Mobil Pickup 2500 CC Double Cabin 4WD": 1095,
+    "Mobil Pickup 2500 CC Double Cabin 4WD (TL K3)": 1095,
+    "Sepeda Motor Sport (Listrik)": 1095,
+    "Sepeda Motor Trail": 1095,
+    "Sepeda Motor Trail (TL K3)": 1095,
+    "Truk Engkel": 1095,
+    "Mobil Skylift - Crane": 1095,
+    "Perahu mesin 100 HP": 1095,
+    "Helm Safety": 365,
+    "Sepatu Kerja Safety": 365,
+    "Sarung Tangan Kulit": 365,
+    "Kacamata Safety/Sunglasses": 365,
+    "Jas Hujan Two Pieces": 365,
+    "Pakaian/Seragam Kerja": 365,
+    "Rompi Distribusi": 365,
+    "Tang Kombinasi": 365,
+    "Obeng Plus(+)": 365,
+    "Obeng Minus(-)": 365,
+    "Cutter Set": 365,
+    "Tas Perkakas": 365,
+    Headlamp: 365,
+    "Tang Ampere (Clip on AVO Meter digital) 600 A": 365,
+    "Phase Sequence": 730,
+    "Alat Ukur Tahanan Isolasi type 10.000 Volt DC": 730,
+    "Wire Cutter s.d 240 mm^2": 730,
+    "Lampu Sorot 12 V ; 100 Watt": 365,
+    "Lampu Senter 6 Battery (Re-charger)": 365,
+    "Tool Set Mekanik Lengkap": 365,
+    Chainsaw: 730,
+    "Angkus Isolasi": 365,
+    Parang: 183,
+    "Tali Manila 12 mm2 (20m)": 365,
+    "Hidrolik Press (dies uk 35 s.d 300 mm2)": 730,
+    "Coffing Hoist/Rachet Puller 1,5 Ton": 730,
+    "Kotak Peralatan (Termasuk Arit)": 730,
+    "Tangga Fiber (2 Section Ladder)": 548,
+    "Smartphone + Power Bank (APKT Mobile)": 730,
+    "Telescopic Hotstick 20 kV ; 10,7 mtr": 548,
+    "Hand Press (dies uk 10 s.d 70 mm2)": 730,
+    "Hand Press Electric (dies uk 10 s.d 70 mm2)": 730,
+    "Tang Ampere 3 Phase": 730,
+    "Earth Tester": 1095,
+    "Full Body Hardness + Double Lanyard": 730,
+    "Voltage Detector 20 kV": 730,
+    "Sarung Tangan 20 kV kelas 2": 1095,
+    "Sepatu Berisolasi 20 kV kelas 2": 1095,
+    "Sarung Tangan Tahan Tegangan 1kV (Karet)": 365,
+    "Radio Komunikasi Unit Lengkap dengan Antena VHF": 1095,
+    "Radio Komunikasi HT": 730,
+    "Groundcluster Lengkap dengan Cable, Groundrod dan Kelengkapannya": 730,
+    APAR: 730,
+    "Kotak P3K Jenis A": 365,
+    "Traffic Cone + Webbing": 913,
+    "Tanda Papan Peringatan Kerja": 730,
+    LOTO: 365,
+  };
+  const lebarMin = 400 + ulps.length * 160;
 
   let html = `<div style="overflow-x:auto">
   <table class="table table-bordered table-sm mb-0 align-middle" style="min-width:${lebarMin}px;font-size:12px">
@@ -141,11 +204,12 @@ function tampilOutput() {
         ${th("No", "width:40px")}
         ${th("Kendaraan / Peralatan", "min-width:160px")}
         ${th("Jml<br>Kontrak", "text-align:center")}
+        ${th("Masa Ekonomis<br>(Hari)", "text-align:center")}
         ${ulps.map((u) => `<th colspan="3" style="background:linear-gradient(135deg,#003087,#0057B8);color:#fff !important;text-align:center;border-left:3px solid rgba(255,255,255,0.4)">${u}</th>`).join("")}
         ${th("Jumlah<br>Realisasi", "text-align:center;border-left:3px solid rgba(255,255,255,0.4)")}
       </tr>
       <tr>
-        <th colspan="3" style="background:#001a5e;color:#fff !important"></th>
+        <th colspan="4" style="background:#001a5e;color:#fff !important"></th>
         ${ulps
           .map(
             () => `
@@ -169,6 +233,7 @@ function tampilOutput() {
       <td class="text-muted text-center">${i + 1}</td>
       <td class="fw-semibold">${b.nama}</td>
       <td class="text-center fw-bold text-primary">${b.kontrakTotal}</td>
+      <td class="text-center text-secondary">${masaEkonomisMap[b.nama] || "—"}</td>
       ${ulps
         .map((ulp) => {
           const d = b.dataUlp[ulp];
@@ -204,6 +269,7 @@ function tampilOutput() {
   html += `<tr style="background:#EEF3FF;font-weight:800;border-top:2px solid #003087">
     <td colspan="2" style="color:#003087">TOTAL</td>
     <td class="text-center" style="color:#003087">${totalKontrak}</td>
+    <td class="text-center text-muted">—</td>
     ${ulps
       .map((ulp) => {
         const t = totalUlp[ulp];

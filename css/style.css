@@ -5,14 +5,19 @@
 
 :root {
   --pln-blue: #003087;
-  --pln-light: #0057B8;
-  --pln-sky: #00AEEF;
+  --pln-light: #0057b8;
+  --pln-sky: #00aeef;
 }
 
 /* ===== LOGIN ===== */
 body.login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--pln-blue) 0%, var(--pln-light) 60%, var(--pln-sky) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--pln-blue) 0%,
+    var(--pln-light) 60%,
+    var(--pln-sky) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,20 +34,24 @@ body.login-page {
   height: 80px;
   object-fit: contain;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 /* ===== APP ===== */
 body.app-page {
-  background: #F0F4F8;
+  background: #f0f4f8;
   padding-bottom: 80px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 /* ===== NAVBAR ===== */
 .pln-navbar {
-  background: linear-gradient(135deg, var(--pln-blue), var(--pln-light)) !important;
-  box-shadow: 0 2px 12px rgba(0,48,135,0.15);
+  background: linear-gradient(
+    135deg,
+    var(--pln-blue),
+    var(--pln-light)
+  ) !important;
+  box-shadow: 0 2px 12px rgba(0, 48, 135, 0.15);
 }
 
 .header-logo {
@@ -79,8 +88,8 @@ body.app-page {
   height: 64px;
   background: white;
   display: flex;
-  border-top: 1px solid #E2E8F0;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
   z-index: 1000;
 }
 
@@ -91,7 +100,7 @@ body.app-page {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  color: #94A3B8;
+  color: #94a3b8;
   text-decoration: none;
   font-size: 10px;
   font-weight: 600;
@@ -104,24 +113,26 @@ body.app-page {
 
 /* ===== UPLOAD BOX ===== */
 .upload-box {
-  border: 2px dashed #CBD5E1;
+  border: 2px dashed #cbd5e1;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background: #F8FAFC;
-  transition: border-color 0.2s, background 0.2s;
+  background: #f8fafc;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .upload-box:hover {
   border-color: var(--pln-sky);
-  background: #EFF8FF;
+  background: #eff8ff;
 }
 
 /* ===== KALKULASI BOX ===== */
 .calc-box {
-  background: #EEF3FF;
-  border: 1px solid #C5D5F5;
+  background: #eef3ff;
+  border: 1px solid #c5d5f5;
   border-radius: 10px;
   padding: 10px 14px;
   font-weight: 700;
@@ -135,7 +146,7 @@ body.app-page {
   height: 60px;
   border-radius: 8px;
   object-fit: cover;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
   cursor: pointer;
 }
 
@@ -143,11 +154,11 @@ body.app-page {
 .filter-chip {
   padding: 5px 12px;
   border-radius: 20px;
-  border: 1.5px solid #CBD5E1;
+  border: 1.5px solid #cbd5e1;
   background: white;
   font-size: 12px;
   font-weight: 600;
-  color: #64748B;
+  color: #64748b;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -161,7 +172,7 @@ body.app-page {
 
 /* ===== HIGHLIGHT SEARCH ===== */
 .highlight {
-  background: #FEF08A;
+  background: #fef08a;
   border-radius: 3px;
   padding: 0 2px;
 }
@@ -169,4 +180,107 @@ body.app-page {
 /* ===== TOAST ===== */
 .toast {
   min-width: 260px;
+}
+
+/* ===== RESPONSIVE - DESKTOP ===== */
+@media (min-width: 768px) {
+  /* Body lebih lebar di desktop */
+  body.app-page {
+    padding-bottom: 0;
+    font-size: 14px;
+  }
+
+  /* Sembunyikan bottom nav di desktop, pakai top nav */
+  .bottom-nav {
+    display: none;
+  }
+
+  /* Navbar jadi lebih tinggi & rapi */
+  .pln-navbar {
+    padding: 12px 32px !important;
+  }
+
+  .header-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Konten pakai max-width di desktop */
+  .container-fluid.px-3 {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 32px !important;
+  }
+
+  /* Tabel font lebih besar */
+  .table {
+    font-size: 13px;
+  }
+
+  .table td,
+  .table th {
+    padding: 10px 12px;
+  }
+
+  /* Card lebih lega */
+  .card-body {
+    padding: 20px 24px;
+  }
+
+  /* Filter chips lebih besar */
+  .filter-chip {
+    font-size: 13px;
+    padding: 6px 16px;
+  }
+
+  /* Tombol aksi lebih besar */
+  .btn-sm {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+
+  /* Input search lebih lega */
+  .input-group .form-control {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Tambah top navigation bar di desktop */
+  .desktop-nav {
+    display: flex !important;
+  }
+}
+
+.desktop-nav {
+  display: none;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 32px;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.desktop-nav a {
+  padding: 12px 20px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.desktop-nav a.active {
+  color: var(--pln-blue);
+  border-bottom-color: var(--pln-blue);
+}
+
+.desktop-nav a:hover {
+  color: var(--pln-blue);
+  background: #f0f4f8;
 }

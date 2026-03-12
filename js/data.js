@@ -320,7 +320,7 @@ function konfirmasiHapus(id) {
 async function eksekusiHapus(id) {
   await deleteAsset(id);
   bootstrap.Modal.getInstance(document.getElementById("modalHapus"))?.hide();
-  tampilToast("🗑️ Data berhasil dihapus!");
+  tampilToast(" Data berhasil dihapus!");
 }
 
 function tampilToast(pesan) {

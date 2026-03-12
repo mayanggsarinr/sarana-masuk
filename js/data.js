@@ -166,27 +166,48 @@ function bukaDetail(id) {
   document.getElementById("detailUsia").textContent = usia ?? "—";
   document.getElementById("detailSisa").textContent = sisa ?? "—";
 
+  // File BA
   const baEl = document.getElementById("detailBA");
-  baEl.innerHTML =
-    a.baFiles && a.baFiles.length
-      ? a.baFiles
-          .map(
-            (f) =>
-              `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`,
-          )
-          .join("")
-      : '<span class="text-muted small">Tidak ada file</span>';
+  if (a.baFiles && a.baFiles.length) {
+    baEl.innerHTML = a.baFiles
+      .map((f) => {
+        // Support format baru (object base64) dan lama (string nama)
+        if (typeof f === "object" && f.data) {
+          if (f.tipe && f.tipe.startsWith("image/")) {
+            return `<div class="mb-1">
+            <img src="${f.data}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="${f.nama}">
+            <div class="text-muted" style="font-size:10px">${f.nama}</div>
+          </div>`;
+          }
+          return `<span class="badge bg-secondary rounded-2 p-2">📄 ${f.nama}</span>`;
+        }
+        return `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`;
+      })
+      .join("");
+  } else {
+    baEl.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
+  }
 
+  // File Foto
   const fotoEl = document.getElementById("detailFoto");
-  fotoEl.innerHTML =
-    a.fotoFiles && a.fotoFiles.length
-      ? a.fotoFiles
-          .map(
-            (f) =>
-              `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`,
-          )
-          .join("")
-      : '<span class="text-muted small">Tidak ada foto</span>';
+  if (a.fotoFiles && a.fotoFiles.length) {
+    fotoEl.innerHTML = a.fotoFiles
+      .map((f) => {
+        if (typeof f === "object" && f.data) {
+          if (f.tipe && f.tipe.startsWith("image/")) {
+            return `<div class="mb-1">
+            <img src="${f.data}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="${f.nama}">
+            <div class="text-muted" style="font-size:10px">${f.nama}</div>
+          </div>`;
+          }
+          return `<span class="badge bg-success rounded-2 p-2">📷 ${f.nama}</span>`;
+        }
+        return `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`;
+      })
+      .join("");
+  } else {
+    fotoEl.innerHTML = '<span class="text-muted small">Tidak ada foto</span>';
+  }
 
   new bootstrap.Modal(document.getElementById("modalDetail")).show();
 }

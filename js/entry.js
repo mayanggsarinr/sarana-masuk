@@ -1,6 +1,5 @@
 import { addAsset } from "./firebase-config.js";
 
-// Masa ekonomis otomatis dari data Excel mentor
 const masaEkonomisMap = {
   "Mobil Station 1500 CC": 1095,
   "Mobil Station 2500 CC": 1095,
@@ -64,6 +63,17 @@ const masaEkonomisMap = {
   LOTO: 365,
 };
 
+// Konversi file ke base64
+function fileKeBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () =>
+      resolve({ nama: file.name, tipe: file.type, data: reader.result });
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function previewFiles(inputId, previewId) {
   const input = document.getElementById(inputId);
   const preview = document.getElementById(previewId);
@@ -73,6 +83,13 @@ function previewFiles(inputId, previewId) {
     div.className = "badge bg-secondary rounded-2 p-2 me-1";
     div.textContent = "📄 " + file.name;
     preview.appendChild(div);
+    // Preview gambar langsung
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.style = "max-height:60px;border-radius:8px;margin-top:4px";
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
+    }
   });
 }
 
@@ -103,19 +120,21 @@ async function simpanEntry() {
   );
   const sisa = masa - usia;
 
-  const baNames = Array.from(document.getElementById("file_ba").files).map(
-    (f) => f.name,
-  );
-  const fotoNames = Array.from(document.getElementById("file_foto").files).map(
-    (f) => f.name,
-  );
-
   const btn = document.getElementById("btnSimpan");
   btn.innerHTML =
     '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
   btn.disabled = true;
 
   try {
+    // Konversi file BA ke base64
+    const baFiles = await Promise.all(
+      Array.from(document.getElementById("file_ba").files).map(fileKeBase64),
+    );
+    // Konversi foto ke base64
+    const fotoFiles = await Promise.all(
+      Array.from(document.getElementById("file_foto").files).map(fileKeBase64),
+    );
+
     await addAsset({
       nama,
       tglUL,
@@ -125,8 +144,8 @@ async function simpanEntry() {
       usia,
       sisa,
       realisasi: 0,
-      baFiles: baNames,
-      fotoFiles: fotoNames,
+      baFiles, // array of {nama, tipe, data}
+      fotoFiles, // array of {nama, tipe, data}
       tglEntry: new Date().toISOString(),
     });
     resetForm();

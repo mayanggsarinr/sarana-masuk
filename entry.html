@@ -34,20 +34,15 @@
       </button>
     </nav>
 
-    <!-- DESKTOP NAV -->
-    <nav class="desktop-nav">
-      <a href="entry.html" class="active"
-        ><i class="bi bi-plus-square"></i> Entry Data</a
-      >
-      <a href="data.html" class=""
-        ><i class="bi bi-clipboard-data"></i> Data Aset</a
-      >
-      <a href="output.html" class=""
-        ><i class="bi bi-bar-chart"></i> Output Laporan</a
-      >
-    </nav>
+  
+  <!-- DESKTOP NAV -->
+  <nav class="desktop-nav">
+    <a href="entry.html" class="active"><i class="bi bi-plus-square"></i> Entry Data</a>
+    <a href="data.html" class=""><i class="bi bi-clipboard-data"></i> Data Aset</a>
+    <a href="output.html" class=""><i class="bi bi-bar-chart"></i> Output Laporan</a>
+  </nav>
 
-    <!-- KONTEN -->
+  <!-- KONTEN -->
     <div class="container-fluid px-3 py-3 pb-5 mb-4">
       <h5 class="fw-bold mb-0">Entry Data Aset</h5>
       <p class="text-muted small mb-3">
@@ -201,7 +196,15 @@
             </select>
           </div>
 
-          <div class="row g-2 mb-3">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted text-uppercase">Jumlah Item</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" type="button" onclick="ubahJumlah(-1)">−</button>
+              <input class="form-control text-center fw-bold" id="f_jumlah" type="number" value="1" min="1" max="500">
+              <button class="btn btn-outline-secondary" type="button" onclick="ubahJumlah(1)">+</button>
+            </div>
+            <div class="text-muted mt-1" style="font-size:11px"></div>
+          </div>
             <div class="col-6">
               <label
                 class="form-label small fw-semibold text-muted text-uppercase"

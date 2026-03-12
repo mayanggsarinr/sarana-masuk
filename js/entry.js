@@ -93,11 +93,21 @@ function previewFiles(inputId, previewId) {
   });
 }
 
+function ubahJumlah(delta) {
+  const input = document.getElementById("f_jumlah");
+  const val = Math.max(1, Math.min(500, (parseInt(input.value) || 1) + delta));
+  input.value = val;
+}
+
 async function simpanEntry() {
   const nama = document.getElementById("f_kndrn").value;
   const ulp = document.getElementById("f_ulp").value;
   const tglUL = document.getElementById("f_tgl_ul").value;
   const tglULP = document.getElementById("f_tgl_ulp").value;
+  const jumlah = Math.max(
+    1,
+    parseInt(document.getElementById("f_jumlah").value) || 1,
+  );
 
   if (!nama) {
     tampilToast("⚠️ Nama kendaraan/peralatan wajib dipilih!");
@@ -121,35 +131,40 @@ async function simpanEntry() {
   const sisa = masa - usia;
 
   const btn = document.getElementById("btnSimpan");
-  btn.innerHTML =
-    '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan ${jumlah} item...`;
   btn.disabled = true;
 
   try {
-    // Konversi file BA ke base64
     const baFiles = await Promise.all(
       Array.from(document.getElementById("file_ba").files).map(fileKeBase64),
     );
-    // Konversi foto ke base64
     const fotoFiles = await Promise.all(
       Array.from(document.getElementById("file_foto").files).map(fileKeBase64),
     );
 
-    await addAsset({
-      nama,
-      tglUL,
-      tglULP,
-      ulp,
-      masaEkonomis: masa,
-      usia,
-      sisa,
-      realisasi: 0,
-      baFiles, // array of {nama, tipe, data}
-      fotoFiles, // array of {nama, tipe, data}
-      tglEntry: new Date().toISOString(),
-    });
+    // Simpan sebanyak jumlah item
+    const promises = [];
+    for (let i = 0; i < jumlah; i++) {
+      promises.push(
+        addAsset({
+          nama,
+          tglUL,
+          tglULP,
+          ulp,
+          masaEkonomis: masa,
+          usia,
+          sisa,
+          realisasi: 0,
+          baFiles,
+          fotoFiles,
+          tglEntry: new Date().toISOString(),
+        }),
+      );
+    }
+    await Promise.all(promises);
+
     resetForm();
-    tampilToast("✅ Data berhasil disimpan!");
+    tampilToast(`✅ ${jumlah} item berhasil disimpan!`);
   } catch (e) {
     console.error(e);
     tampilToast("❌ Gagal menyimpan: " + e.message);
@@ -166,7 +181,7 @@ function resetForm() {
   document.getElementById("f_tgl_ulp").value = "";
   document.getElementById("prev_ba").innerHTML = "";
   document.getElementById("prev_foto").innerHTML = "";
-  document.getElementById("file_ba").value = "";
+  document.getElementById("f_jumlah").value = "1";
   document.getElementById("file_foto").value = "";
 }
 
@@ -177,3 +192,4 @@ function tampilToast(pesan) {
 
 window.previewFiles = previewFiles;
 window.simpanEntry = simpanEntry;
+window.ubahJumlah = ubahJumlah;

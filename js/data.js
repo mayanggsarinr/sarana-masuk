@@ -3,12 +3,48 @@ import { listenAssets } from "./firebase-config.js";
 let semuaAssets = [];
 let filterUlp = "semua";
 
+// Hitung usia realtime dari tanggal masuk sampai HARI INI
+function hitungUsia(tglUL, tglULP) {
+  const tglRef = tglUL || tglULP;
+  if (!tglRef) return null;
+  const selisih = Math.floor((new Date() - new Date(tglRef)) / 86400000);
+  return Math.max(0, selisih);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   listenAssets((assets) => {
     semuaAssets = assets;
     bangunFilterUlp();
     tampilData();
   });
+
+  // Update waktu realtime setiap detik
+  setInterval(() => {
+    const el = document.getElementById("jamSekarang");
+    if (el) {
+      const now = new Date();
+      el.textContent = now.toLocaleString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    }
+    // Update usia & sisa di setiap baris tabel secara realtime
+    semuaAssets.forEach((a) => {
+      const usia = hitungUsia(a.tglUL, a.tglULP);
+      const sisa =
+        a.masaEkonomis != null && usia != null ? a.masaEkonomis - usia : null;
+      const tr = document.querySelector(`tr[data-id="${a.id}"]`);
+      if (tr) {
+        tr.querySelector(".col-usia").textContent = usia ?? "—";
+        tr.querySelector(".col-sisa").textContent = sisa ?? "—";
+      }
+    });
+  }, 1000);
 });
 
 function sorot(teks, kata) {
@@ -78,34 +114,36 @@ function tampilData() {
   const tbody = document.getElementById("tabelBody");
 
   if (!semuaAssets.length) {
-    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
       <i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada data<br>
       <small>Tambahkan melalui halaman Entry Data</small></td></tr>`;
     return;
   }
 
   if (!hasil.length) {
-    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
       <i class="bi bi-search fs-1 d-block mb-2"></i>Data tidak ditemukan</td></tr>`;
     return;
   }
 
   tbody.innerHTML = hasil
     .map((a, i) => {
+      const usia = hitungUsia(a.tglUL, a.tglULP);
+      const sisa =
+        a.masaEkonomis != null && usia != null ? a.masaEkonomis - usia : null;
       const fotoInfo =
         a.fotoFiles && a.fotoFiles.length
           ? `<span class="badge bg-success">📷 ${a.fotoFiles.length}</span>`
           : '<span class="text-muted">—</span>';
-      const sisaWarna = "";
-      return `<tr onclick="bukaDetail('${a.id}')" style="cursor:pointer" class="table-row-hover">
+      return `<tr onclick="bukaDetail('${a.id}')" data-id="${a.id}" style="cursor:pointer">
       <td class="text-muted small">${i + 1}</td>
       <td class="fw-semibold" style="min-width:130px">${sorot(a.nama, kata)}</td>
       <td><span class="badge bg-primary bg-opacity-10 text-primary">${sorot(a.ulp || "", kata)}</span></td>
       <td class="small">${a.tglUL || "—"}</td>
       <td class="small">${a.tglULP || "—"}</td>
-      <td class="small text-center">${a.usia ?? "—"}</td>
+      <td class="small text-center col-usia">${usia ?? "—"}</td>
       <td class="small text-center">${a.masaEkonomis || "—"}</td>
-      <td class="small text-center fw-bold ${sisaWarna}">${a.sisa ?? "—"}</td>
+      <td class="small text-center fw-bold col-sisa">${sisa ?? "—"}</td>
       <td>${fotoInfo}</td>
     </tr>`;
     })
@@ -116,39 +154,39 @@ function bukaDetail(id) {
   const a = semuaAssets.find((x) => x.id === id);
   if (!a) return;
 
+  const usia = hitungUsia(a.tglUL, a.tglULP);
+  const sisa =
+    a.masaEkonomis != null && usia != null ? a.masaEkonomis - usia : null;
+
   document.getElementById("detailNama").textContent = a.nama || "—";
   document.getElementById("detailUlp").textContent = "📍 ULP " + (a.ulp || "—");
   document.getElementById("detailTglUL").textContent = a.tglUL || "—";
   document.getElementById("detailTglULP").textContent = a.tglULP || "—";
   document.getElementById("detailMasa").textContent = a.masaEkonomis ?? "—";
-  document.getElementById("detailUsia").textContent = a.usia ?? "—";
+  document.getElementById("detailUsia").textContent = usia ?? "—";
+  document.getElementById("detailSisa").textContent = sisa ?? "—";
 
-  const sisa = a.sisa ?? null;
-  const sisaEl = document.getElementById("detailSisa");
-  sisaEl.textContent = sisa ?? "—";
-  sisaEl.className = "fw-bold";
-
-  // File BA
   const baEl = document.getElementById("detailBA");
-  if (a.baFiles && a.baFiles.length) {
-    baEl.innerHTML = a.baFiles
-      .map(
-        (f) => `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`,
-      )
-      .join("");
-  } else {
-    baEl.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
-  }
+  baEl.innerHTML =
+    a.baFiles && a.baFiles.length
+      ? a.baFiles
+          .map(
+            (f) =>
+              `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`,
+          )
+          .join("")
+      : '<span class="text-muted small">Tidak ada file</span>';
 
-  // File Foto
   const fotoEl = document.getElementById("detailFoto");
-  if (a.fotoFiles && a.fotoFiles.length) {
-    fotoEl.innerHTML = a.fotoFiles
-      .map((f) => `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`)
-      .join("");
-  } else {
-    fotoEl.innerHTML = '<span class="text-muted small">Tidak ada foto</span>';
-  }
+  fotoEl.innerHTML =
+    a.fotoFiles && a.fotoFiles.length
+      ? a.fotoFiles
+          .map(
+            (f) =>
+              `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`,
+          )
+          .join("")
+      : '<span class="text-muted small">Tidak ada foto</span>';
 
   new bootstrap.Modal(document.getElementById("modalDetail")).show();
 }

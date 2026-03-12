@@ -1,14 +1,75 @@
-import { listenAssets } from "./firebase-config.js";
+import { listenAssets, updateAsset, deleteAsset } from "./firebase-config.js";
 
 let semuaAssets = [];
 let filterUlp = "semua";
 
-// Hitung usia realtime dari tanggal masuk sampai HARI INI
+const masaEkonomisMap = {
+  "Mobil Station 1500 CC": 1095,
+  "Mobil Station 2500 CC": 1095,
+  "Mobil Pickup 1500 CC": 1095,
+  "Mobil Pickup 2500 CC": 1095,
+  "Mobil Pickup 2500 CC Single Cabin 4WD": 1095,
+  "Mobil Pickup 2500 CC Double Cabin 4WD": 1095,
+  "Mobil Pickup 2500 CC Double Cabin 4WD (TL K3)": 1095,
+  "Sepeda Motor Sport (Listrik)": 1095,
+  "Sepeda Motor Trail": 1095,
+  "Sepeda Motor Trail (TL K3)": 1095,
+  "Truk Engkel": 1095,
+  "Mobil Skylift - Crane": 1095,
+  "Perahu mesin 100 HP": 1095,
+  "Helm Safety": 365,
+  "Sepatu Kerja Safety": 365,
+  "Sarung Tangan Kulit": 365,
+  "Kacamata Safety/Sunglasses": 365,
+  "Jas Hujan Two Pieces": 365,
+  "Pakaian/Seragam Kerja": 365,
+  "Rompi Distribusi": 365,
+  "Tang Kombinasi": 365,
+  "Obeng Plus(+)": 365,
+  "Obeng Minus(-)": 365,
+  "Cutter Set": 365,
+  "Tas Perkakas": 365,
+  Headlamp: 365,
+  "Tang Ampere (Clip on AVO Meter digital) 600 A": 365,
+  "Phase Sequence": 730,
+  "Alat Ukur Tahanan Isolasi type 10.000 Volt DC": 730,
+  "Wire Cutter s.d 240 mm^2": 730,
+  "Lampu Sorot 12 V ; 100 Watt": 365,
+  "Lampu Senter 6 Battery (Re-charger)": 365,
+  "Tool Set Mekanik Lengkap": 365,
+  Chainsaw: 730,
+  "Angkus Isolasi": 365,
+  Parang: 183,
+  "Tali Manila 12 mm2 (20m)": 365,
+  "Hidrolik Press (dies uk 35 s.d 300 mm2)": 730,
+  "Coffing Hoist/Rachet Puller 1,5 Ton": 730,
+  "Kotak Peralatan (Termasuk Arit)": 730,
+  "Tangga Fiber (2 Section Ladder)": 548,
+  "Smartphone + Power Bank (APKT Mobile)": 730,
+  "Telescopic Hotstick 20 kV ; 10,7 mtr": 548,
+  "Hand Press (dies uk 10 s.d 70 mm2)": 730,
+  "Hand Press Electric (dies uk 10 s.d 70 mm2)": 730,
+  "Tang Ampere 3 Phase": 730,
+  "Earth Tester": 1095,
+  "Full Body Hardness + Double Lanyard": 730,
+  "Voltage Detector 20 kV": 730,
+  "Sarung Tangan 20 kV kelas 2": 1095,
+  "Sepatu Berisolasi 20 kV kelas 2": 1095,
+  "Sarung Tangan Tahan Tegangan 1kV (Karet)": 365,
+  "Radio Komunikasi Unit Lengkap dengan Antena VHF": 1095,
+  "Radio Komunikasi HT": 730,
+  "Groundcluster Lengkap dengan Cable, Groundrod dan Kelengkapannya": 730,
+  APAR: 730,
+  "Kotak P3K Jenis A": 365,
+  "Traffic Cone + Webbing": 913,
+  "Tanda Papan Peringatan Kerja": 730,
+  LOTO: 365,
+};
+
 function hitungUsia(tglUL, tglULP) {
   const tglRef = tglUL || tglULP;
   if (!tglRef) return null;
-  const selisih = Math.floor((new Date() - new Date(tglRef)) / 86400000);
-  return Math.max(0, selisih);
+  return Math.max(0, Math.floor((new Date() - new Date(tglRef)) / 86400000));
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -18,12 +79,10 @@ document.addEventListener("DOMContentLoaded", function () {
     tampilData();
   });
 
-  // Update waktu realtime setiap detik
   setInterval(() => {
     const el = document.getElementById("jamSekarang");
     if (el) {
-      const now = new Date();
-      el.textContent = now.toLocaleString("id-ID", {
+      el.textContent = new Date().toLocaleString("id-ID", {
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -33,7 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
         second: "2-digit",
       });
     }
-    // Update usia & sisa di setiap baris tabel secara realtime
     semuaAssets.forEach((a) => {
       const usia = hitungUsia(a.tglUL, a.tglULP);
       const sisa =
@@ -114,15 +172,11 @@ function tampilData() {
   const tbody = document.getElementById("tabelBody");
 
   if (!semuaAssets.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
-      <i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada data<br>
-      <small>Tambahkan melalui halaman Entry Data</small></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada data</td></tr>`;
     return;
   }
-
   if (!hasil.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
-      <i class="bi bi-search fs-1 d-block mb-2"></i>Data tidak ditemukan</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted"><i class="bi bi-search fs-1 d-block mb-2"></i>Data tidak ditemukan</td></tr>`;
     return;
   }
 
@@ -135,21 +189,28 @@ function tampilData() {
         a.fotoFiles && a.fotoFiles.length
           ? `<span class="badge bg-success">📷 ${a.fotoFiles.length}</span>`
           : '<span class="text-muted">—</span>';
-      return `<tr onclick="bukaDetail('${a.id}')" data-id="${a.id}" style="cursor:pointer">
-      <td class="text-muted small">${i + 1}</td>
-      <td class="fw-semibold" style="min-width:130px">${sorot(a.nama, kata)}</td>
-      <td><span class="badge bg-primary bg-opacity-10 text-primary">${sorot(a.ulp || "", kata)}</span></td>
-      <td class="small">${a.tglUL || "—"}</td>
-      <td class="small">${a.tglULP || "—"}</td>
-      <td class="small text-center col-usia">${usia ?? "—"}</td>
-      <td class="small text-center">${a.masaEkonomis || "—"}</td>
-      <td class="small text-center fw-bold col-sisa">${sisa ?? "—"}</td>
-      <td>${fotoInfo}</td>
+      return `<tr data-id="${a.id}" style="cursor:pointer">
+      <td class="text-muted small" onclick="bukaDetail('${a.id}')">${i + 1}</td>
+      <td class="fw-semibold" style="min-width:130px" onclick="bukaDetail('${a.id}')">${sorot(a.nama, kata)}</td>
+      <td onclick="bukaDetail('${a.id}')"><span class="badge bg-primary bg-opacity-10 text-primary">${sorot(a.ulp || "", kata)}</span></td>
+      <td class="small" onclick="bukaDetail('${a.id}')">${a.tglUL || "—"}</td>
+      <td class="small" onclick="bukaDetail('${a.id}')">${a.tglULP || "—"}</td>
+      <td class="small text-center col-usia" onclick="bukaDetail('${a.id}')">${usia ?? "—"}</td>
+      <td class="small text-center" onclick="bukaDetail('${a.id}')">${a.masaEkonomis || "—"}</td>
+      <td class="small text-center fw-bold col-sisa" onclick="bukaDetail('${a.id}')">${sisa ?? "—"}</td>
+      <td onclick="bukaDetail('${a.id}')">${fotoInfo}</td>
+      <td>
+        <div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size:10px" onclick="bukaEdit('${a.id}')">✏️</button>
+          <button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:10px" onclick="konfirmasiHapus('${a.id}')">🗑️</button>
+        </div>
+      </td>
     </tr>`;
     })
     .join("");
 }
 
+// ===== DETAIL =====
 function bukaDetail(id) {
   const a = semuaAssets.find((x) => x.id === id);
   if (!a) return;
@@ -166,53 +227,111 @@ function bukaDetail(id) {
   document.getElementById("detailUsia").textContent = usia ?? "—";
   document.getElementById("detailSisa").textContent = sisa ?? "—";
 
-  // File BA
-  const baEl = document.getElementById("detailBA");
-  if (a.baFiles && a.baFiles.length) {
-    baEl.innerHTML = a.baFiles
+  const renderFiles = (files, el) => {
+    if (!files || !files.length) {
+      el.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
+      return;
+    }
+    el.innerHTML = files
       .map((f) => {
-        // Support format baru (object base64) dan lama (string nama)
-        if (typeof f === "object" && f.data) {
-          if (f.tipe && f.tipe.startsWith("image/")) {
-            return `<div class="mb-1">
-            <img src="${f.data}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="${f.nama}">
-            <div class="text-muted" style="font-size:10px">${f.nama}</div>
-          </div>`;
-          }
+        if (
+          typeof f === "object" &&
+          f.data &&
+          f.tipe &&
+          f.tipe.startsWith("image/")
+        )
+          return `<div class="mb-1"><img src="${f.data}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover"><div class="text-muted" style="font-size:10px">${f.nama}</div></div>`;
+        if (typeof f === "object" && f.nama)
           return `<span class="badge bg-secondary rounded-2 p-2">📄 ${f.nama}</span>`;
-        }
         return `<span class="badge bg-secondary rounded-2 p-2">📄 ${f}</span>`;
       })
       .join("");
-  } else {
-    baEl.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
-  }
-
-  // File Foto
-  const fotoEl = document.getElementById("detailFoto");
-  if (a.fotoFiles && a.fotoFiles.length) {
-    fotoEl.innerHTML = a.fotoFiles
-      .map((f) => {
-        if (typeof f === "object" && f.data) {
-          if (f.tipe && f.tipe.startsWith("image/")) {
-            return `<div class="mb-1">
-            <img src="${f.data}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="${f.nama}">
-            <div class="text-muted" style="font-size:10px">${f.nama}</div>
-          </div>`;
-          }
-          return `<span class="badge bg-success rounded-2 p-2">📷 ${f.nama}</span>`;
-        }
-        return `<span class="badge bg-success rounded-2 p-2">📷 ${f}</span>`;
-      })
-      .join("");
-  } else {
-    fotoEl.innerHTML = '<span class="text-muted small">Tidak ada foto</span>';
-  }
+  };
+  renderFiles(a.baFiles, document.getElementById("detailBA"));
+  renderFiles(a.fotoFiles, document.getElementById("detailFoto"));
 
   new bootstrap.Modal(document.getElementById("modalDetail")).show();
+}
+
+// ===== EDIT =====
+function bukaEdit(id) {
+  const a = semuaAssets.find((x) => x.id === id);
+  if (!a) return;
+
+  document.getElementById("editId").value = a.id;
+  document.getElementById("editNama").value = a.nama || "";
+  document.getElementById("editUlp").value = a.ulp || "";
+  document.getElementById("editTglUL").value = a.tglUL || "";
+  document.getElementById("editTglULP").value = a.tglULP || "";
+
+  new bootstrap.Modal(document.getElementById("modalEdit")).show();
+}
+
+async function simpanEdit() {
+  const id = document.getElementById("editId").value;
+  const nama = document.getElementById("editNama").value;
+  const ulp = document.getElementById("editUlp").value;
+  const tglUL = document.getElementById("editTglUL").value;
+  const tglULP = document.getElementById("editTglULP").value;
+
+  if (!nama || !ulp) {
+    tampilToast("⚠️ Nama dan ULP wajib diisi!");
+    return;
+  }
+
+  const masa = masaEkonomisMap[nama] || 0;
+  const tglRef = tglUL || tglULP;
+  const usia = tglRef
+    ? Math.max(0, Math.floor((new Date() - new Date(tglRef)) / 86400000))
+    : 0;
+  const sisa = masa - usia;
+
+  const btn = document.getElementById("btnSimpanEdit");
+  btn.disabled = true;
+  btn.innerHTML =
+    '<span class="spinner-border spinner-border-sm me-1"></span>Menyimpan...';
+
+  await updateAsset(id, {
+    nama,
+    ulp,
+    tglUL,
+    tglULP,
+    masaEkonomis: masa,
+    usia,
+    sisa,
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Simpan';
+  bootstrap.Modal.getInstance(document.getElementById("modalEdit"))?.hide();
+  tampilToast("✅ Data berhasil diupdate!");
+}
+
+// ===== HAPUS =====
+function konfirmasiHapus(id) {
+  const a = semuaAssets.find((x) => x.id === id);
+  if (!a) return;
+  document.getElementById("hapusNama").textContent = a.nama + " — ULP " + a.ulp;
+  document.getElementById("btnKonfirmasiHapus").onclick = () =>
+    eksekusiHapus(id);
+  new bootstrap.Modal(document.getElementById("modalHapus")).show();
+}
+
+async function eksekusiHapus(id) {
+  await deleteAsset(id);
+  bootstrap.Modal.getInstance(document.getElementById("modalHapus"))?.hide();
+  tampilToast("🗑️ Data berhasil dihapus!");
+}
+
+function tampilToast(pesan) {
+  document.getElementById("toastMsg").textContent = pesan;
+  new bootstrap.Toast(document.getElementById("toast"), { delay: 3000 }).show();
 }
 
 window.tampilData = tampilData;
 window.setFilterUlp = setFilterUlp;
 window.hapusCari = hapusCari;
 window.bukaDetail = bukaDetail;
+window.bukaEdit = bukaEdit;
+window.simpanEdit = simpanEdit;
+window.konfirmasiHapus = konfirmasiHapus;

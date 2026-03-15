@@ -34,13 +34,35 @@ const db = getFirestore(app);
 
 // Ambil semua aset (realtime)
 function listenAssets(callback) {
-  return onSnapshot(collection(db, "assets"), (snapshot) => {
-    const assets = [];
-    snapshot.forEach((d) => assets.push({ id: d.id, ...d.data() }));
-    // Sort by tglEntry descending
-    assets.sort((a, b) => (b.tglEntry || "").localeCompare(a.tglEntry || ""));
-    callback(assets);
-  });
+  return onSnapshot(
+    collection(db, "assets"),
+    (snapshot) => {
+      const assets = [];
+      snapshot.forEach((d) => assets.push({ id: d.id, ...d.data() }));
+      assets.sort((a, b) => (b.tglEntry || "").localeCompare(a.tglEntry || ""));
+      const banner = document.getElementById("firestore-error-banner");
+      if (banner) banner.style.display = "none";
+      callback(assets);
+    },
+    (error) => {
+      console.error("Firestore error:", error);
+      let banner = document.getElementById("firestore-error-banner");
+      if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "firestore-error-banner";
+        banner.style.cssText =
+          "position:fixed;top:60px;left:0;right:0;z-index:9999;background:#dc3545;color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600";
+        document.body.prepend(banner);
+      }
+      if (error.code === "permission-denied") {
+        banner.innerHTML =
+          "⚠️ Akses Firestore ditolak — Rules mungkin expired. <a href=\'https://console.firebase.google.com\' target=\'_blank\' style=\'color:#fff;text-decoration:underline\'>Buka Firebase Console → Firestore → Rules → perpanjang tanggal</a>";
+      } else {
+        banner.innerHTML = `⚠️ Gagal memuat data (${error.code}): cek koneksi internet lalu refresh halaman.`;
+      }
+      banner.style.display = "block";
+    },
+  );
 }
 
 // Tambah aset baru

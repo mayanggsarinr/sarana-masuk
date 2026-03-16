@@ -212,8 +212,23 @@
                   style="background: #d1e7dd"
                 >
                   <div class="text-muted" style="font-size: 10px">SISA</div>
-                  <div class="fw-bold text-success" id="detailSisa">—</div>
+                  <div class="fw-bold" id="detailSisa">—</div>
                   <div class="text-muted" style="font-size: 9px">hari</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <div class="p-2 rounded-3 bg-light text-center">
+                  <div class="text-muted" style="font-size:10px">KONDISI</div>
+                  <div class="fw-bold small" id="detailKondisi">—</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-2 rounded-3 bg-light">
+                  <div class="text-muted" style="font-size:10px">KETERANGAN</div>
+                  <div class="small" id="detailKet">—</div>
                 </div>
               </div>
             </div>
@@ -353,14 +368,27 @@
                 <input type="date" class="form-control" id="editTglUL" />
               </div>
               <div class="col-6">
-                <label
-                  class="form-label small fw-semibold text-muted text-uppercase"
-                  >Tgl Diterima ULP</label
-                >
+                <label class="form-label small fw-semibold text-muted text-uppercase">Tgl Diterima ULP</label>
                 <input type="date" class="form-control" id="editTglULP" />
               </div>
             </div>
-          </div>
+            <div class="mb-3 mt-3">
+              <label class="form-label small fw-semibold text-muted text-uppercase">Kondisi</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="editKondisi" id="editKondisiBaik" value="Baik" checked>
+                  <label class="form-check-label text-success fw-semibold" for="editKondisiBaik">✅ Baik</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="editKondisi" id="editKondisiKurang" value="Kurang Baik">
+                  <label class="form-check-label text-warning fw-semibold" for="editKondisiKurang">⚠️ Kurang Baik</label>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-muted text-uppercase">Keterangan</label>
+              <textarea class="form-control" id="editKet" rows="2" placeholder="Keterangan tambahan (opsional)"></textarea>
+            </div>
           <div class="modal-footer border-0 pt-0">
             <button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">
               Batal

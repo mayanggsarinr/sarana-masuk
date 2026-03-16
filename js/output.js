@@ -1,4 +1,4 @@
-import { listenAssets, updateAsset } from "./firebase-config.js";
+import { listenAssets, updateAsset } from "./db.js";
 
 let semuaAssets = [];
 let idAsetDipilih = null;

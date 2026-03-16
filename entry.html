@@ -203,7 +203,25 @@
               <input class="form-control text-center fw-bold" id="f_jumlah" type="number" value="1" min="1" max="500">
               <button class="btn btn-outline-secondary" type="button" onclick="ubahJumlah(1)">+</button>
             </div>
-            <div class="text-muted mt-1" style="font-size:11px"></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted text-uppercase">Kondisi</label>
+            <div class="d-flex gap-2">
+              <div class="form-check form-check-inline flex-fill">
+                <input class="form-check-input" type="radio" name="f_kondisi" id="kondisi_baik" value="Baik" checked>
+                <label class="form-check-label fw-semibold text-success" for="kondisi_baik">✅ Baik</label>
+              </div>
+              <div class="form-check form-check-inline flex-fill">
+                <input class="form-check-input" type="radio" name="f_kondisi" id="kondisi_kurang" value="Kurang Baik">
+                <label class="form-check-label fw-semibold text-warning" for="kondisi_kurang">⚠️ Kurang Baik</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted text-uppercase">Keterangan</label>
+            <textarea class="form-control" id="f_ket" rows="2" placeholder="Keterangan tambahan (opsional)"></textarea>
           </div>
             <div class="col-6">
               <label

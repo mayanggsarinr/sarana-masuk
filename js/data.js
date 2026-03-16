@@ -1,4 +1,4 @@
-import { listenAssets, updateAsset, deleteAsset } from "./firebase-config.js";
+import { listenAssets, updateAsset, deleteAsset } from "./db.js";
 
 let semuaAssets = [];
 let filterUlp = "semua";
@@ -227,6 +227,18 @@ function bukaDetail(id) {
   document.getElementById("detailUsia").textContent = usia ?? "—";
   document.getElementById("detailSisa").textContent = sisa ?? "—";
 
+  // Kondisi
+  const kondisiEl = document.getElementById("detailKondisi");
+  if (kondisiEl) {
+    kondisiEl.textContent = a.kondisi || "Baik";
+    kondisiEl.className =
+      "fw-bold " +
+      (a.kondisi === "Kurang Baik" ? "text-warning" : "text-success");
+  }
+  // Keterangan
+  const ketEl = document.getElementById("detailKet");
+  if (ketEl) ketEl.textContent = a.ket || "—";
+
   const renderFiles = (files, el) => {
     if (!files || !files.length) {
       el.innerHTML = '<span class="text-muted small">Tidak ada file</span>';
@@ -263,6 +275,12 @@ function bukaEdit(id) {
   document.getElementById("editUlp").value = a.ulp || "";
   document.getElementById("editTglUL").value = a.tglUL || "";
   document.getElementById("editTglULP").value = a.tglULP || "";
+  document.getElementById("editKet").value = a.ket || "";
+  const kondisiVal = a.kondisi || "Baik";
+  const kondisiRadio = document.querySelector(
+    `input[name="editKondisi"][value="${kondisiVal}"]`,
+  );
+  if (kondisiRadio) kondisiRadio.checked = true;
 
   new bootstrap.Modal(document.getElementById("modalEdit")).show();
 }
@@ -278,6 +296,11 @@ async function simpanEdit() {
     tampilToast("⚠️ Nama dan ULP wajib diisi!");
     return;
   }
+
+  const kondisi =
+    document.querySelector('input[name="editKondisi"]:checked')?.value ||
+    "Baik";
+  const ket = document.getElementById("editKet").value.trim();
 
   const masa = masaEkonomisMap[nama] || 0;
   const tglRef = tglUL || tglULP;
@@ -299,6 +322,8 @@ async function simpanEdit() {
     masaEkonomis: masa,
     usia,
     sisa,
+    kondisi,
+    ket,
   });
 
   btn.disabled = false;

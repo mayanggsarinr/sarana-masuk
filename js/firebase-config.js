@@ -3,7 +3,7 @@
 //  Konfigurasi Firebase & Firestore
 // ============================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
 import {
   getFirestore,
   collection,
@@ -15,7 +15,7 @@ import {
   onSnapshot,
   orderBy,
   query,
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDq59vCXRF2DTu1TCSLrqbhufzAaG_mW0c",

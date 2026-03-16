@@ -1,4 +1,4 @@
-import { addAsset } from "./firebase-config.js";
+import { addAsset } from "./db.js";
 
 const masaEkonomisMap = {
   "Mobil Station 1500 CC": 1095,
@@ -130,7 +130,9 @@ async function simpanEntry() {
   );
   const sisa = masa - usia;
 
-  const btn = document.getElementById("btnSimpan");
+  const kondisi =
+    document.querySelector('input[name="f_kondisi"]:checked')?.value || "Baik";
+  const ket = document.getElementById("f_ket").value.trim();
   btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan ${jumlah} item...`;
   btn.disabled = true;
 
@@ -154,6 +156,8 @@ async function simpanEntry() {
           masaEkonomis: masa,
           usia,
           sisa,
+          kondisi,
+          ket,
           realisasi: 0,
           baFiles,
           fotoFiles,
@@ -182,6 +186,9 @@ function resetForm() {
   document.getElementById("prev_ba").innerHTML = "";
   document.getElementById("prev_foto").innerHTML = "";
   document.getElementById("f_jumlah").value = "1";
+  document.getElementById("f_ket").value = "";
+  document.querySelector('input[name="f_kondisi"][value="Baik"]').checked =
+    true;
   document.getElementById("file_foto").value = "";
 }
 

@@ -186,8 +186,8 @@ function tampilData() {
       const sisa =
         a.masaEkonomis != null && usia != null ? a.masaEkonomis - usia : null;
       const fotoInfo =
-        a.fotoFiles && a.fotoFiles.length
-          ? `<span class="badge bg-success">📷 ${a.fotoFiles.length}</span>`
+        (a.fotos || a.fotoFiles) && (a.fotos || a.fotoFiles).length
+          ? `<span class="badge bg-success">📷 ${(a.fotos || a.fotoFiles).length}</span>`
           : '<span class="text-muted">—</span>';
       return `<tr data-id="${a.id}" style="cursor:pointer">
       <td class="text-muted small" onclick="bukaDetail('${a.id}')">${i + 1}</td>
@@ -246,6 +246,8 @@ function bukaDetail(id) {
     }
     el.innerHTML = files
       .map((f) => {
+        if (typeof f === "object" && f.url)
+          return `<div class="mb-1"><img src="${f.url}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover"><div class="text-muted" style="font-size:10px">${f.nama || ""}</div></div>`;
         if (
           typeof f === "object" &&
           f.data &&
@@ -259,8 +261,8 @@ function bukaDetail(id) {
       })
       .join("");
   };
-  renderFiles(a.baFiles, document.getElementById("detailBA"));
-  renderFiles(a.fotoFiles, document.getElementById("detailFoto"));
+  renderFiles(a.baFotos || a.baFiles, document.getElementById("detailBA"));
+  renderFiles(a.fotos || a.fotoFiles, document.getElementById("detailFoto"));
 
   new bootstrap.Modal(document.getElementById("modalDetail")).show();
 }

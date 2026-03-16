@@ -279,22 +279,22 @@
           <div class="mb-3">
             <label
               class="form-label small fw-semibold text-muted text-uppercase"
-              >Eviden BA (Berita Acara)</label
+              >Foto BA (Berita Acara)</label
             >
             <div
               class="upload-box"
               onclick="document.getElementById('file_ba').click()"
             >
-              <i class="bi bi-file-earmark-arrow-up fs-4 text-muted"></i>
+              <i class="bi bi-camera fs-4 text-muted"></i>
               <div class="small text-muted mt-1">
-                Tap untuk upload file BA (PDF, PNG, JPG)
+                Tap untuk upload foto BA (JPG, PNG)
               </div>
             </div>
             <input
               type="file"
               id="file_ba"
               multiple
-              accept=".pdf,.png,.jpg,.jpeg"
+              accept="image/*"
               style="display: none"
               onchange="previewFiles('file_ba', 'prev_ba')"
             />

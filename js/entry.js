@@ -133,6 +133,8 @@ async function simpanEntry() {
   const kondisi =
     document.querySelector('input[name="f_kondisi"]:checked')?.value || "Baik";
   const ket = document.getElementById("f_ket").value.trim();
+
+  const btn = document.getElementById("btnSimpan");
   btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan ${jumlah} item...`;
   btn.disabled = true;
 
@@ -200,3 +202,4 @@ function tampilToast(pesan) {
 window.previewFiles = previewFiles;
 window.simpanEntry = simpanEntry;
 window.ubahJumlah = ubahJumlah;
+window.hitungUsia = function () {};

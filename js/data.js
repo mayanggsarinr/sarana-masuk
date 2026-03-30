@@ -2,6 +2,8 @@ import { listenAssets, updateAsset, deleteAsset } from "./db.js";
 
 let semuaAssets = [];
 let filterUlp = "semua";
+let halamanSaat = 1;
+const PER_HALAMAN = 50;
 
 const masaEkonomisMap = {
   "Mobil Station 1500 CC": 1095,
@@ -133,6 +135,7 @@ function bangunFilterUlp() {
 
 function setFilterUlp(ulp, el) {
   filterUlp = ulp;
+  halamanSaat = 1;
   document
     .querySelectorAll("#ulpFilters .filter-chip")
     .forEach((c) => c.classList.remove("active"));
@@ -152,6 +155,7 @@ function tampilData() {
     .toLowerCase();
   const btnHapus = document.getElementById("btnHapusCari");
   kata ? btnHapus.classList.remove("d-none") : btnHapus.classList.add("d-none");
+  halamanSaat = 1;
 
   const hasil = semuaAssets.filter((a) => {
     const cocokCari =
@@ -162,10 +166,6 @@ function tampilData() {
     return cocokCari && cocokUlp;
   });
 
-  document.getElementById("infoHasil").textContent =
-    kata || filterUlp !== "semua"
-      ? `Menampilkan ${hasil.length} dari ${semuaAssets.length} aset`
-      : "";
   document.getElementById("jumlahAset").textContent =
     semuaAssets.length + " aset";
 
@@ -173,14 +173,27 @@ function tampilData() {
 
   if (!semuaAssets.length) {
     tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Belum ada data</td></tr>`;
+    renderPaginasi(0, 0);
     return;
   }
   if (!hasil.length) {
     tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted"><i class="bi bi-search fs-1 d-block mb-2"></i>Data tidak ditemukan</td></tr>`;
+    renderPaginasi(0, 0);
     return;
   }
 
-  tbody.innerHTML = hasil
+  // Pagination
+  const totalHalaman = Math.ceil(hasil.length / PER_HALAMAN);
+  if (halamanSaat > totalHalaman) halamanSaat = totalHalaman;
+  const mulai = (halamanSaat - 1) * PER_HALAMAN;
+  const hasilHalaman = hasil.slice(mulai, mulai + PER_HALAMAN);
+
+  document.getElementById("infoHasil").textContent =
+    `Menampilkan ${mulai + 1}–${mulai + hasilHalaman.length} dari ${hasil.length} aset`;
+
+  renderPaginasi(totalHalaman, hasil.length);
+
+  tbody.innerHTML = hasilHalaman
     .map((a, i) => {
       const usia = hitungUsia(a.tglUL, a.tglULP);
       const sisa =
@@ -208,6 +221,44 @@ function tampilData() {
     </tr>`;
     })
     .join("");
+}
+
+function renderPaginasi(totalHalaman, totalData) {
+  let el = document.getElementById("paginasiContainer");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "paginasiContainer";
+    el.style.cssText =
+      "display:flex;justify-content:center;align-items:center;gap:8px;padding:12px 0;flex-wrap:wrap";
+    const tabel = document.getElementById("tabelBody");
+    if (tabel) tabel.closest("table").after(el);
+  }
+  if (totalHalaman <= 1) {
+    el.innerHTML = "";
+    return;
+  }
+  let html = "";
+  html += `<button onclick="gantiHalaman(${halamanSaat - 1})" ${halamanSaat === 1 ? "disabled" : ""} class="btn btn-sm btn-outline-secondary">‹ Prev</button>`;
+  for (let i = 1; i <= totalHalaman; i++) {
+    if (i === 1 || i === totalHalaman || Math.abs(i - halamanSaat) <= 2) {
+      html += `<button onclick="gantiHalaman(${i})" class="btn btn-sm ${i === halamanSaat ? "btn-primary" : "btn-outline-secondary"}">${i}</button>`;
+    } else if (Math.abs(i - halamanSaat) === 3) {
+      html += `<span class="text-muted">...</span>`;
+    }
+  }
+  html += `<button onclick="gantiHalaman(${halamanSaat + 1})" ${halamanSaat === totalHalaman ? "disabled" : ""} class="btn btn-sm btn-outline-secondary">Next ›</button>`;
+  el.innerHTML = html;
+}
+
+function gantiHalaman(h) {
+  const totalHalaman = Math.ceil(
+    semuaAssets.filter((a) => filterUlp === "semua" || a.ulp === filterUlp)
+      .length / PER_HALAMAN,
+  );
+  if (h < 1 || h > totalHalaman) return;
+  halamanSaat = h;
+  tampilData();
+  window.scrollTo(0, 0);
 }
 
 // ===== DETAIL =====
@@ -358,6 +409,7 @@ function tampilToast(pesan) {
 window.tampilData = tampilData;
 window.setFilterUlp = setFilterUlp;
 window.hapusCari = hapusCari;
+window.gantiHalaman = gantiHalaman;
 window.bukaDetail = bukaDetail;
 window.bukaEdit = bukaEdit;
 window.simpanEdit = simpanEdit;

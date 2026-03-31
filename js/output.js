@@ -25,13 +25,43 @@ function tampilOutput() {
   // Kumpulkan ULP unik dari data
   const ulps = [...new Set(assets.map((a) => a.ulp).filter(Boolean))].sort();
 
+  // Alias nama yang berbeda → disamakan ke nama standar
+  const aliasNama = {
+    "Wire Cutter s.d 240 mm2": "Wire Cutter s.d 240 mm^2",
+    "Lampu Sorot 12 V 100 Watt": "Lampu Sorot 12 V ; 100 Watt",
+    "Lampu Sorot 12 V; 100 Watt": "Lampu Sorot 12 V ; 100 Watt",
+    "Telescopic Hotstick 20 kV 10,7 mtr":
+      "Telescopic Hotstick 20 kV ; 10,7 mtr",
+    "Telescopic Hotstick 20 kV; 10,7 mtr":
+      "Telescopic Hotstick 20 kV ; 10,7 mtr",
+    "Groundcluster Lengkap dengan Cable Groundrod dan Kelengkapannya":
+      "Groundcluster Lengkap dengan Cable, Groundrod dan Kelengkapannya",
+    "Helm safety": "Helm Safety",
+    "Sepatu kerja safety": "Sepatu Kerja Safety",
+    "Sarung tangan kulit": "Sarung Tangan Kulit",
+    "Kacamata safety / Sunglasses": "Kacamata Safety/Sunglasses",
+    "Jas hujan two pieces": "Jas Hujan Two Pieces",
+    "Tang Ampere (Clip on AVO Meter digital ) 600 A":
+      "Tang Ampere (Clip on AVO Meter digital) 600 A",
+    "Smart Phone + Power Bank (APKT Mobile)":
+      "Smartphone + Power Bank (APKT Mobile)",
+    "Tangga Fiber ( 2 section ladder )": "Tangga Fiber (2 Section Ladder)",
+    "Tangga Fiber ( 2 section ladder ) 9,6 mtr":
+      "Tangga Fiber (2 Section Ladder)",
+    "Lampu sorot 12 V ; 100 watt": "Lampu Sorot 12 V ; 100 Watt",
+    "Coffing hoist / Rachet puller 1,5 Ton":
+      "Coffing Hoist/Rachet Puller 1,5 Ton",
+    "Kotak P3K jenis A": "Kotak P3K Jenis A",
+    "Tanda papan Peringatan kerja": "Tanda Papan Peringatan Kerja",
+  };
+
   // Kelompokkan berdasarkan nama aset
   const kelompok = {};
   assets.forEach((a) => {
-    const key = a.nama;
+    const key = aliasNama[a.nama] || a.nama;
     if (!kelompok[key]) {
       kelompok[key] = {
-        nama: a.nama,
+        nama: aliasNama[a.nama] || a.nama,
         kontrakTotal: 0,
         dataUlp: {},
       };

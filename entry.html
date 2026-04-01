@@ -277,53 +277,31 @@
           </h6>
 
           <div class="mb-3">
-            <label
-              class="form-label small fw-semibold text-muted text-uppercase"
-              >Foto BA (Berita Acara)</label
-            >
-            <div
-              class="upload-box"
-              onclick="document.getElementById('file_ba').click()"
-            >
-              <i class="bi bi-camera fs-4 text-muted"></i>
-              <div class="small text-muted mt-1">
-                Tap untuk upload foto BA (JPG, PNG)
-              </div>
+            <label class="form-label small fw-semibold text-muted text-uppercase">
+              Foto BA (Berita Acara) — Link Google Drive
+            </label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+              <input type="text" class="form-control" id="link_ba"
+                placeholder="Paste link Google Drive foto BA..."
+                oninput="previewLink('link_ba','prev_ba')">
             </div>
-            <input
-              type="file"
-              id="file_ba"
-              multiple
-              accept="image/*"
-              style="display: none"
-              onchange="previewFiles('file_ba', 'prev_ba')"
-            />
-            <div class="d-flex flex-wrap gap-2 mt-2" id="prev_ba"></div>
+            <div class="form-text text-muted">Upload foto ke Google Drive → klik kanan → Salin link → paste di sini</div>
+            <div class="mt-2" id="prev_ba"></div>
           </div>
 
           <div class="mb-0">
-            <label
-              class="form-label small fw-semibold text-muted text-uppercase"
-              >Eviden Foto Aset</label
-            >
-            <div
-              class="upload-box"
-              onclick="document.getElementById('file_foto').click()"
-            >
-              <i class="bi bi-camera fs-4 text-muted"></i>
-              <div class="small text-muted mt-1">
-                Tap untuk upload foto aset
-              </div>
+            <label class="form-label small fw-semibold text-muted text-uppercase">
+              Eviden Foto Aset — Link Google Drive
+            </label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+              <input type="text" class="form-control" id="link_foto"
+                placeholder="Paste link Google Drive foto aset..."
+                oninput="previewLink('link_foto','prev_foto')">
             </div>
-            <input
-              type="file"
-              id="file_foto"
-              multiple
-              accept="image/*"
-              style="display: none"
-              onchange="previewFiles('file_foto', 'prev_foto')"
-            />
-            <div class="d-flex flex-wrap gap-2 mt-2" id="prev_foto"></div>
+            <div class="form-text text-muted">Upload foto ke Google Drive → klik kanan → Salin link → paste di sini</div>
+            <div class="mt-2" id="prev_foto"></div>
           </div>
         </div>
       </div>

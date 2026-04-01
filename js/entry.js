@@ -1,7 +1,5 @@
 import { addAsset } from "./db.js";
 
-const IMGBB_KEY = "1d89132b268e6e26a863a10a364cc693";
-
 const masaEkonomisMap = {
   "Mobil Station 1500 CC": 1095,
   "Mobil Station 2500 CC": 1095,
@@ -65,42 +63,44 @@ const masaEkonomisMap = {
   LOTO: 365,
 };
 
-// Upload gambar ke ImgBB, kembalikan URL
-async function uploadKeImgBB(file) {
-  const formData = new FormData();
-  formData.append("image", file);
-  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
-    method: "POST",
-    body: formData,
-  });
-  const json = await res.json();
-  if (!json.success)
-    throw new Error("Gagal upload ke ImgBB: " + json.error?.message);
-  return {
-    nama: file.name,
-    url: json.data.display_url || json.data.url,
-    thumb: json.data.thumb?.url || json.data.url,
-  };
+// Konversi link Google Drive ke URL thumbnail
+function konversiLinkDrive(link) {
+  if (!link || !link.trim()) return null;
+  link = link.trim();
+  let match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match)
+    return {
+      url: `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`,
+      link,
+    };
+  match = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match)
+    return {
+      url: `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`,
+      link,
+    };
+  return { url: link, link };
 }
 
-function previewFiles(inputId, previewId) {
+function previewLink(inputId, previewId) {
   const input = document.getElementById(inputId);
   const preview = document.getElementById(previewId);
+  if (!input || !preview) return;
+  const link = input.value.trim();
   preview.innerHTML = "";
-  Array.from(input.files).forEach((file) => {
-    if (file.type.startsWith("image/")) {
-      const img = document.createElement("img");
-      img.style =
-        "max-height:60px;border-radius:8px;margin-top:4px;margin-right:4px";
-      img.src = URL.createObjectURL(file);
-      preview.appendChild(img);
-    } else {
-      const div = document.createElement("div");
-      div.className = "badge bg-secondary rounded-2 p-2 me-1";
-      div.textContent = "📄 " + file.name;
-      preview.appendChild(div);
-    }
-  });
+  if (!link) return;
+  const converted = konversiLinkDrive(link);
+  if (converted) {
+    const img = document.createElement("img");
+    img.style =
+      "max-height:80px;border-radius:8px;margin-top:4px;border:1px solid #ddd";
+    img.src = converted.url;
+    img.onerror = function () {
+      preview.innerHTML =
+        '<span class="badge bg-success p-2">Link tersimpan</span>';
+    };
+    preview.appendChild(img);
+  }
 }
 
 function ubahJumlah(delta) {
@@ -120,15 +120,15 @@ async function simpanEntry() {
   );
 
   if (!nama) {
-    tampilToast("⚠️ Nama kendaraan/peralatan wajib dipilih!");
+    tampilToast("Nama kendaraan/peralatan wajib dipilih!");
     return;
   }
   if (!ulp) {
-    tampilToast("⚠️ ULP Penerima wajib dipilih!");
+    tampilToast("ULP Penerima wajib dipilih!");
     return;
   }
   if (!tglUL && !tglULP) {
-    tampilToast("⚠️ Tanggal diterima wajib diisi!");
+    tampilToast("Tanggal diterima wajib diisi!");
     return;
   }
 
@@ -139,24 +139,20 @@ async function simpanEntry() {
     Math.floor((new Date() - new Date(tglRef)) / 86400000),
   );
   const sisa = masa - usia;
-
   const kondisi =
     document.querySelector('input[name="f_kondisi"]:checked')?.value || "Baik";
   const ket = document.getElementById("f_ket").value.trim();
 
   const btn = document.getElementById("btnSimpan");
-  btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Mengupload foto...`;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan ${jumlah} item...`;
   btn.disabled = true;
 
   try {
-    // Upload foto BA dan foto aset ke ImgBB
-    const baFotoFiles = Array.from(document.getElementById("file_ba").files);
-    const fotoFiles = Array.from(document.getElementById("file_foto").files);
-
-    const baFotos = await Promise.all(baFotoFiles.map((f) => uploadKeImgBB(f)));
-    const fotos = await Promise.all(fotoFiles.map((f) => uploadKeImgBB(f)));
-
-    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan ${jumlah} item...`;
+    // Ambil link Google Drive
+    const linkBA = document.getElementById("link_ba")?.value?.trim() || "";
+    const linkFoto = document.getElementById("link_foto")?.value?.trim() || "";
+    const baFotos = linkBA ? [konversiLinkDrive(linkBA)].filter(Boolean) : [];
+    const fotos = linkFoto ? [konversiLinkDrive(linkFoto)].filter(Boolean) : [];
 
     const promises = [];
     for (let i = 0; i < jumlah; i++) {
@@ -172,19 +168,18 @@ async function simpanEntry() {
           kondisi,
           ket,
           realisasi: 0,
-          baFotos, // foto BA (array URL ImgBB)
-          fotos, // foto aset (array URL ImgBB)
+          baFotos,
+          fotos,
           tglEntry: new Date().toISOString(),
         }),
       );
     }
     await Promise.all(promises);
-
     resetForm();
-    tampilToast(`✅ ${jumlah} item berhasil disimpan!`);
+    tampilToast(`${jumlah} item berhasil disimpan!`);
   } catch (e) {
     console.error(e);
-    tampilToast("❌ Gagal menyimpan: " + e.message);
+    tampilToast("Gagal menyimpan: " + e.message);
   }
 
   btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Simpan Data Aset';
@@ -196,14 +191,18 @@ function resetForm() {
   document.getElementById("f_ulp").value = "";
   document.getElementById("f_tgl_ul").value = "";
   document.getElementById("f_tgl_ulp").value = "";
-  document.getElementById("prev_ba").innerHTML = "";
-  document.getElementById("prev_foto").innerHTML = "";
   document.getElementById("f_jumlah").value = "1";
   document.getElementById("f_ket").value = "";
   document.querySelector('input[name="f_kondisi"][value="Baik"]').checked =
     true;
-  document.getElementById("file_ba").value = "";
-  document.getElementById("file_foto").value = "";
+  const lba = document.getElementById("link_ba");
+  const lfoto = document.getElementById("link_foto");
+  if (lba) lba.value = "";
+  if (lfoto) lfoto.value = "";
+  const pba = document.getElementById("prev_ba");
+  const pfoto = document.getElementById("prev_foto");
+  if (pba) pba.innerHTML = "";
+  if (pfoto) pfoto.innerHTML = "";
 }
 
 function tampilToast(pesan) {
@@ -211,7 +210,7 @@ function tampilToast(pesan) {
   new bootstrap.Toast(document.getElementById("toast"), { delay: 3000 }).show();
 }
 
-window.previewFiles = previewFiles;
+window.previewLink = previewLink;
 window.simpanEntry = simpanEntry;
 window.ubahJumlah = ubahJumlah;
 window.hitungUsia = function () {};
